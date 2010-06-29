@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="GoUP_Tests" verbose="4">
+	<test name="Web-layer tests">
+		<packages>
+			<package name="com.goup.web.*" />
+		</packages>
+	</test>
+	<test name="Services tests">
+		<packages>
+			<package name="com.goup.service.*" />
+		</packages>
+	</test>
+</suite>

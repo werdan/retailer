@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+  <definition name="page.common" template="/WEB-INF/jsp/main.jsp">
+    <put-attribute name="header" value="/WEB-INF/jsp/header.jsp" />
+    <put-attribute name="content" value="/WEB-INF/jsp/content.jsp" />
+    <put-attribute name="footer" value="/WEB-INF/jsp/footer.jsp" />
+    <put-attribute name="menu" value="/WEB-INF/jsp/menu.jsp" />
+  </definition>
+  <definition name="*@google" preparer="com.goup.web.views.GoogleFetchedViewPreparer" extends="page.common">
+    <put-attribute name="content" value="/WEB-INF/jsp/googleFetched.jsp" />
+  </definition>
+  <definition name="index"  extends="page.common">
+    <put-attribute name="content" value="/WEB-INF/jsp/index.jsp" />
+  </definition>
+</tiles-definitions>
