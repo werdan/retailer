@@ -6,20 +6,13 @@
      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<context:annotation-config/>
-	
-	<bean id="propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:application.properties
-                </value>
-			</list>
-		</property>
-		<!-- property name="ignoreUnresolvablePlaceholders" value="true"/ -->
+	<context:component-scan base-package="com.goup.service"/>
+	<bean id="googleDocsService" class="com.goup.service.GoogleDocsService">
+		<property name="prefix" value="${googledocs.webcontent.prefix}"/>
 	</bean>
-	<import resource="services.xml"/>
-	<import resource="tilesConfigurer.xml"/>
-	<import resource="mvc.xml"/>
-	<import resource="dao.xml"/>
+	<bean id="gdataDocService" class="com.goup.gdata.client.SpringableDocsService">
+	    <constructor-arg value="${googledocs.applicationName}"/>
+		<property name="userName" value="${googledocs.username}"/>
+		<property name="password" value="${googledocs.password}"/>
+	</bean>
 </beans>
