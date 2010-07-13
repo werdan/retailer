@@ -8,8 +8,8 @@
 	 http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
 	<bean id="appEnginePersistenceManagerLocator"
-		class="fr.smile.retailer.dao.AppEnginePersistenceManagerLocator"></bean>
+		class="fr.smile.retailer.dao.AppEnginePersistenceManagerLocator"/>
 
-	<bean id="dailySalesDAO" class="fr.smile.retailer.dao.DailySalesDAO"></bean>
+	<bean id="dailySalesDAO" class="fr.smile.retailer.dao.DailySalesDAO"/>
 
 </beans>

@@ -1,8 +1,11 @@
 package fr.smile.retailer.dao;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
@@ -12,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SuppressWarnings("rawtypes")
 public abstract class AbstractAppEngineDAO<T> implements GenericDAO<T> {
 
-	private Class modelClass;
+	protected Class modelClass;
 
     protected AbstractAppEngineDAO() {
         if (getClass().getGenericSuperclass() instanceof ParameterizedType) {
@@ -23,13 +26,15 @@ public abstract class AbstractAppEngineDAO<T> implements GenericDAO<T> {
         }
     }
 
-	
-	
 	@Autowired
 	private PersistenceManagerLocator pmlocator;
 	
 	public void setPersistenceManagerLocator(PersistenceManagerLocator pml) {
 		this.pmlocator = pml;
+	}
+	
+	public PersistenceManagerLocator getPersistenceManagerLocator() {
+		return this.pmlocator;
 	}
 	
 	@Override
@@ -64,12 +69,14 @@ public abstract class AbstractAppEngineDAO<T> implements GenericDAO<T> {
 	@Override
 	public List<T> findAll() {
 	    PersistenceManager pm = pmlocator.getPersistenceManager();
-	    Query query = pm.newQuery(modelClass);
-		try {
-            return (List<T>) query.execute();            
-        } finally {
-            query.closeAll();
-        }
+	    Extent extent = pm.getExtent(modelClass, false);
+		Iterator it = extent.iterator();
+		List<T> result = new ArrayList<T>();
+		while (it.hasNext()) {
+			result.add((T) it.next());
+		}
+		extent.closeAll();
+		return result;
 	}
 
 	@Override

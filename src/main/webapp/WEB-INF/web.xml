@@ -11,10 +11,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<param-value>/WEB-INF/log4j.xml</param-value>
 	</context-param>
 	<context-param>
-		<param-name>log4jRefreshInterval</param-name>
-		<param-value>1000</param-value>
-	</context-param>
-	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:spring/applicationContext.xml</param-value>
 	</context-param>
