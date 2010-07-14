@@ -4,6 +4,8 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
+import fr.smile.retailer.dao.interfaces.PersistenceManagerLocator;
+
 public class AppEnginePersistenceManagerLocator implements PersistenceManagerLocator {
 
 	private static final PersistenceManagerFactory pmfInstance =

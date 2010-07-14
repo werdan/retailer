@@ -11,9 +11,15 @@ import javax.jdo.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.appengine.api.datastore.Key;
+
+import fr.smile.retailer.dao.interfaces.GenericDAO;
+import fr.smile.retailer.dao.interfaces.PersistenceManagerLocator;
+import fr.smile.retailer.model.KeyEnabled;
+
 
 @SuppressWarnings("rawtypes")
-public abstract class AbstractAppEngineDAO<T> implements GenericDAO<T> {
+public abstract class AbstractAppEngineDAO<T extends KeyEnabled> implements GenericDAO<T> {
 
 	protected Class modelClass;
 
@@ -36,6 +42,27 @@ public abstract class AbstractAppEngineDAO<T> implements GenericDAO<T> {
 	public PersistenceManagerLocator getPersistenceManagerLocator() {
 		return this.pmlocator;
 	}
+	
+	@Override
+	public T initUnownedRelations(T entity) {
+		return entity;
+	}
+	
+    @SuppressWarnings("unchecked")
+	public T getEntityByKey(Key key) { 
+
+	    PersistenceManager pm = pmlocator.getPersistenceManager();
+		Query query = pm.newQuery("SELECT FROM " + modelClass.getName());
+	    query.setUnique(true);
+		try {
+	    	T result = (T) query.execute();
+	    	return initUnownedRelations(result);
+        } finally {
+        	query.closeAll();
+        	pm.close();
+        }
+    }
+
 	
 	@Override
 	public void save(Object entity) {
@@ -73,9 +100,11 @@ public abstract class AbstractAppEngineDAO<T> implements GenericDAO<T> {
 		Iterator it = extent.iterator();
 		List<T> result = new ArrayList<T>();
 		while (it.hasNext()) {
-			result.add((T) it.next());
+			T resultItem = (T) it.next();
+			result.add(initUnownedRelations(resultItem));
 		}
 		extent.closeAll();
+		pm.close();
 		return result;
 	}
 

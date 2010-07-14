@@ -13,24 +13,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
+import fr.smile.retailer.dao.interfaces.IDailySalesDAO;
+import fr.smile.retailer.dao.interfaces.IStoreDAO;
+import fr.smile.retailer.dao.interfaces.PersistenceManagerLocator;
 import fr.smile.retailer.model.DailySales;
+import fr.smile.retailer.model.Store;
 
 @ContextConfiguration(locations = { "classpath:spring/testApplicationContext.xml"})
 public class DailySalesDAOTest extends AbstractTestNGSpringContextTests {
 
 	@Autowired
     private IDailySalesDAO dailySalesDAO;
+
+	@Autowired
+	private IStoreDAO storeDao;
     
 	private LocalServiceTestHelper helper = null;
+
 
     @AfterMethod
     public void tearDown() {
@@ -116,4 +122,21 @@ public class DailySalesDAOTest extends AbstractTestNGSpringContextTests {
     	Assert.assertTrue(dailySalesDAO.findAll().size() == 2);
     }
 
+    @Test
+    public void testStore() {
+    	Calendar cal = new GregorianCalendar();
+    	cal.set(2009, Calendar.APRIL, 21, 15, 16, 17);
+    	Date date1 = cal.getTime();
+    	DailySales ds1 = new DailySales();
+    	ds1.setDate(date1);
+    	ds1.setSum(BigDecimal.valueOf(1140));
+    	
+    	Store st = new Store("test");
+
+    	ds1.setStore(st);
+    	dailySalesDAO.save(ds1);
+    	
+    	DailySales dsResult = dailySalesDAO.getEntityByKey(ds1.getKey());
+    	Assert.assertEquals(storeDao.getEntityByKey(dsResult.getStore().getKey()), st);
+    }
 }

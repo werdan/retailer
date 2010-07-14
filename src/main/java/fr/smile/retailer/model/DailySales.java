@@ -1,6 +1,7 @@
 package fr.smile.retailer.model;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -9,15 +10,19 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.google.appengine.api.datastore.Key;
 
+import fr.smile.retailer.dao.interfaces.IStoreDAO;
+
 @PersistenceCapable
-public class DailySales {
+public class DailySales implements KeyEnabled {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
-	
 
 	@Persistent
 	private BigDecimal sum;
@@ -25,21 +30,14 @@ public class DailySales {
 	@Persistent
 	private Date date;
 
+	@Persistent
+	private Key storeKey;
+	
 	@NotPersistent
-	private int cachedHashCode;	
-	
-	
-	/**
-	 * Sets Time part of Date to 0;
-	 * @param date
-	 * @return
-	 */
-	public final static Date resetHoursMinutesSeconds(Date date) {
-		date.setHours(0);
-		date.setMinutes(0);
-		date.setSeconds(0);
-		return date;
-	}
+	private int cachedHashCode;
+
+	@NotPersistent
+	private Store store;
 	
 	public Key getKey() {
 		return key;
@@ -58,10 +56,25 @@ public class DailySales {
 	}
 	
 	public void setDate(Date date) {
-		this.date = resetHoursMinutesSeconds(date);
+		this.date = DateUtils.round(date, Calendar.DAY_OF_MONTH);
 	}
 
-	//TODO: correct equals implementation
+	public void setStoreKey(Key storeKey) {
+		this.storeKey = storeKey;
+	}
+
+	public Key getStoreKey() {
+		return storeKey;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
+	}
+
+	public Store getStore() {
+		return store;
+	}
+
 	public boolean equals(Object o) {
 		if (o instanceof DailySales) {
 			DailySales ds = (DailySales) o;
@@ -77,7 +90,7 @@ public class DailySales {
 	
 	public int hashCode() {
 		if (cachedHashCode == 0 ) {
-			String hcString = this.sum.toString() + new Long(this.date.getTime()).toString();
+			String hcString = (this.sum != null ? this.sum.toString() : "") + (this.date != null ? new Long(this.date.getTime()).toString() : "");
 			cachedHashCode = hcString.hashCode();
 		}
 		return cachedHashCode;

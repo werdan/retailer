@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -24,11 +25,16 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
-import fr.smile.retailer.dao.IDailySalesDAO;
+import fr.smile.retailer.dao.interfaces.GenericDAO;
+import fr.smile.retailer.dao.interfaces.IDailySalesDAO;
+import fr.smile.retailer.dao.interfaces.IStoreDAO;
 import fr.smile.retailer.model.DailySales;
+import fr.smile.retailer.model.Store;
+import fr.smile.retailer.web.propertyeditors.StoreEditor;
 
 @ContextConfiguration(locations = { "classpath:spring/testApplicationContext.xml"})
 public class DailySalesControllerTest extends AbstractTestNGSpringContextTests {
@@ -44,6 +50,9 @@ public class DailySalesControllerTest extends AbstractTestNGSpringContextTests {
 	private MockHttpServletResponse response;
 	
 	private LocalServiceTestHelper helper = null;
+
+	@Autowired
+	private IStoreDAO storeDao;
 
     @AfterMethod
     public void tearDown() {
@@ -75,10 +84,15 @@ public class DailySalesControllerTest extends AbstractTestNGSpringContextTests {
 	
 	@Test
 	public void testSubmit() {
+	    	Store st = new Store("test");
+	    	storeDao.save(st);
+
 			request.setRequestURI("/forms/dailysales");
 			request.setMethod("POST");
 			request.addParameter("date", "06-06-2010");
-			
+			StoreEditor se = new StoreEditor();
+			se.setValue(st);
+			request.addParameter("store", se.getAsText());
 			request.addParameter("sum", "100");
 			Assert.assertTrue(dailySalesDAO.findAll().size() == 0);
 			try {
@@ -89,6 +103,12 @@ public class DailySalesControllerTest extends AbstractTestNGSpringContextTests {
 			Assert.assertTrue(dailySalesDAO.findAll().size() == 1);
 			List<DailySales> list = dailySalesDAO.findAll();
 			DailySales ds = list.get(0);
+			
+			GregorianCalendar cal = new GregorianCalendar(2010, Calendar.JUNE, 06, 00, 00, 00);
+	    	Date dateSearch = cal.getTime();
+
+			Assert.assertTrue(DateUtils.isSameDay(dateSearch,ds.getDate()));
 			Assert.assertTrue(BigDecimal.valueOf(100).equals(ds.getSum()));
+			Assert.assertTrue(ds.getStoreKey().equals(st.getKey()));
 	}	
 }

@@ -11,5 +11,6 @@
 		class="fr.smile.retailer.dao.AppEnginePersistenceManagerLocator"/>
 
 	<bean id="dailySalesDAO" class="fr.smile.retailer.dao.DailySalesDAO"/>
+	<bean id="storeDAO" class="fr.smile.retailer.dao.StoreDAO"/>
 
 </beans>
