@@ -1,6 +1,7 @@
 package fr.smile.retailer.web.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +15,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import fr.smile.retailer.dao.AbstractAppEngineDAO;
+import fr.smile.retailer.dao.StoreDAO;
 import fr.smile.retailer.dao.interfaces.IDailySalesDAO;
+import fr.smile.retailer.dao.interfaces.IStoreDAO;
 import fr.smile.retailer.model.DailySales;
 import fr.smile.retailer.model.Store;
 import fr.smile.retailer.web.propertyeditors.DateEditor;
 import fr.smile.retailer.web.propertyeditors.StoreEditor;
 
-@Controller
 /**
  * Controller for Daily sales manipulation
  * </br>
  * 
  */
+@Controller
 public class DailySalesController {
 	
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -37,6 +41,8 @@ public class DailySalesController {
 	
 	@Autowired
 	private StoreEditor storePropEditor;
+	@Autowired
+	private IStoreDAO storeDao;
 	
 	@InitBinder
     public void initBinder(WebDataBinder dataBinder) {
@@ -49,6 +55,12 @@ public class DailySalesController {
 	public ModelAndView getNew(){
 		return new ModelAndView(VIEW_NAME);
 	}
+	
+	@ModelAttribute("stores")
+	public List<Store> getStores() {
+		return storeDao.findAll();
+	}
+
 	
 	@ModelAttribute(MODEL_NAME)
 	public DailySales getNewDailySales() {

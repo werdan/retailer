@@ -17,11 +17,8 @@
                 </value>
 			</list>
 		</property>
-		<!-- property name="ignoreUnresolvablePlaceholders" value="true"/ -->
 	</bean>
 
-	<!-- bean id="appEnginePersistenceManagerLocator"
-		class="fr.smile.retailer.dao.TestHelperPersistenceManagerLocator"></bean-->
 
 	<import resource="services.xml" />
 	<import resource="mvc.xml" />

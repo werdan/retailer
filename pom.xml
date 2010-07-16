@@ -12,6 +12,7 @@
 		<gae.app.name>retailer</gae.app.name>
 		<org.springframework.version>3.0.3.RELEASE</org.springframework.version>
 		<google.gdata.version>1.41.1</google.gdata.version>
+		<productionEnvironment>false</productionEnvironment>
 	</properties>
 
 	<dependencies>
@@ -59,7 +60,6 @@
 			<groupId>com.google.appengine</groupId>
 			<artifactId>appengine-testing</artifactId>
 			<version>${gae.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.appengine</groupId>
@@ -170,9 +170,42 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.3</version>
 		</dependency>
-		
+
 	</dependencies>
 	<build>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>test-application.properties</include>
+				</includes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/**</include>
+				</includes>
+			</testResource>
+		</testResources>
+		<resources>
+			<!-- Main resources -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>application.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/**</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -318,4 +351,17 @@
 			<url>http://maven-gae-plugin.googlecode.com/svn/repository</url>
 		</pluginRepository>
 	</pluginRepositories>
+	<profiles>
+		<profile>
+			<id>production</id>
+			<activation>
+			
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<productionEnvironment>true</productionEnvironment>
+			</properties>
+		</profile>
+	</profiles>
+
 </project>

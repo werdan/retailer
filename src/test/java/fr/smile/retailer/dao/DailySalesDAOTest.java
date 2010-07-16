@@ -35,8 +35,8 @@ public class DailySalesDAOTest extends AbstractTestNGSpringContextTests {
 	@Autowired
 	private IStoreDAO storeDao;
     
-	private LocalServiceTestHelper helper = null;
-
+	@Autowired
+	private AppEngineDBLocalConfig helper;
 
     @AfterMethod
     public void tearDown() {
@@ -45,7 +45,6 @@ public class DailySalesDAOTest extends AbstractTestNGSpringContextTests {
 	
 	@BeforeMethod
 	public void setUp() {
-		helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 		helper.setUp();
 	}
 

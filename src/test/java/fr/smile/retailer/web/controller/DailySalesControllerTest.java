@@ -17,19 +17,11 @@ import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-
-import fr.smile.retailer.dao.interfaces.GenericDAO;
+import fr.smile.retailer.dao.AppEngineDBLocalConfig;
 import fr.smile.retailer.dao.interfaces.IDailySalesDAO;
 import fr.smile.retailer.dao.interfaces.IStoreDAO;
 import fr.smile.retailer.model.DailySales;
@@ -44,13 +36,14 @@ public class DailySalesControllerTest extends AbstractTestNGSpringContextTests {
 
 	@Autowired
 	private IDailySalesDAO dailySalesDAO;
+
+	@Autowired
+	private AppEngineDBLocalConfig helper;
 	
 	private HandlerAdapter handlerAdapter;
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
 	
-	private LocalServiceTestHelper helper = null;
-
 	@Autowired
 	private IStoreDAO storeDao;
 
@@ -61,7 +54,6 @@ public class DailySalesControllerTest extends AbstractTestNGSpringContextTests {
 	
 	@BeforeMethod
 	public void setUp() {
-		helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 		helper.setUp();
 		handlerAdapter = new AnnotationMethodHandlerAdapter();
 		request = new MockHttpServletRequest();

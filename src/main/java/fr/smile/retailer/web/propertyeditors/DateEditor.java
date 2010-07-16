@@ -18,6 +18,10 @@ public class DateEditor extends PropertyEditorSupport {
 
 	@Override
 	public String getAsText() {
-		return format.format((Date) getValue());
+		Object value = getValue();
+		if (value != null && value instanceof Date) {
+			return format.format((Date) value);
+		} 
+		return "";
 	}
 }

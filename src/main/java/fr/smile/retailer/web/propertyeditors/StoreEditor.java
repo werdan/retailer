@@ -21,17 +21,21 @@ public class StoreEditor extends PropertyEditorSupport {
 		
 		Pattern p = Pattern.compile("Store\\((\\d+)\\)");
 		Matcher m = p.matcher(text);
-		m.find();
-		if (m.groupCount() != 1) {
-			throw new IllegalArgumentException();
-		}
-		Key key = new Builder("Store", m.group(1)).getKey();
-		setValue(storeDao.getEntityByKey(key));
+		if (m.find()) {
+			Key key = new Builder("Store", m.group(1)).getKey();
+			setValue(storeDao.getEntityByKey(key));
+			return;
+		} 
+		setValue(new Store(""));
 	}
 
 	@Override
 	public String getAsText() {
-		Store st = (Store) getValue();
-		return st.getKey().getKind() + "(" + st.getKey().getId() + ")";
+		Object value = getValue();
+		if (value != null && value instanceof Store) {
+			Store st = (Store) value;
+			return st.getKey().getKind() + "(" + st.getKey().getId() + ")";
+		}
+		return "";
 	}
 }
