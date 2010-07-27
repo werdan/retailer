@@ -9,10 +9,23 @@
 		<put-attribute name="footer" value="/WEB-INF/jsp/footer.jsp" />
 		<put-attribute name="menu" value="/WEB-INF/jsp/menu.jsp" />
 	</definition>
+
 	<definition name="index" extends="page.common">
 		<put-attribute name="content" value="/WEB-INF/jsp/index.jsp" />
 	</definition>
 	<definition name="dailysales" extends="page.common">
 		<put-attribute name="content" value="/WEB-INF/jsp/dailysales.jsp" />
+	</definition>
+	<definition name="store" extends="page.common">
+		<put-attribute name="content" value="/WEB-INF/jsp/store.jsp" />
+	</definition>
+	
+	<definition name="stocktake" extends="page.common">
+		<put-attribute name="content" value="/WEB-INF/jsp/stocktake.jsp" />
+	</definition>
+
+	<!-- Reports -->
+	<definition name="reports/dailysales" extends="page.common">
+		<put-attribute name="content" value="/WEB-INF/jsp/reports/dailysales.jsp" />
 	</definition>
 </tiles-definitions>

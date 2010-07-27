@@ -4,29 +4,20 @@ import java.beans.PropertyEditorSupport;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory.Builder;
 
-import fr.smile.retailer.dao.interfaces.IStoreDAO;
 import fr.smile.retailer.model.Store;
 
-public class StoreEditor extends PropertyEditorSupport {
-	
-	@Autowired
-	private IStoreDAO storeDao;
+public class KeyEditor extends PropertyEditorSupport {
 	
 	public void setAsText(String text) {
 		
-		Pattern p = Pattern.compile("Store\\((\\d+)\\)");
+		Pattern p = Pattern.compile("(\\w+)\\((\\d+)\\)");
 		Matcher m = p.matcher(text);
 		if (m.find()) {
-			Key key = new Builder("Store", new Long(m.group(1))).getKey();
-			setValue(storeDao.getEntityByKey(key));
-			return;
+			setValue(new Builder(m.group(1), m.group(2)).getKey());
 		} 
-		setValue(new Store(""));
+		setValue(null);
 	}
 
 	@Override

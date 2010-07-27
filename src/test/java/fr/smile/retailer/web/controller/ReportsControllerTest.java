@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -28,13 +27,12 @@ import fr.smile.retailer.dao.interfaces.IDailySalesDAO;
 import fr.smile.retailer.dao.interfaces.IStoreDAO;
 import fr.smile.retailer.model.DailySales;
 import fr.smile.retailer.model.Store;
-import fr.smile.retailer.web.propertyeditors.StoreEditor;
 
 @ContextConfiguration(locations = { "classpath:spring/testApplicationContext.xml"})
-public class DailySalesControllerTest extends AbstractTestNGSpringContextTests {
+public class ReportsControllerTest extends AbstractTestNGSpringContextTests {
 
 	@Autowired
-	private DailySalesController controller;
+	private ReportsController controller;
 
 	@Autowired
 	private IDailySalesDAO dailySalesDAO;
@@ -64,46 +62,38 @@ public class DailySalesControllerTest extends AbstractTestNGSpringContextTests {
 	}
 	
 	@Test
-	public void testGetNew() {
-		request.setRequestURI("/forms/dailysales");
-		request.setMethod("GET");
-		ModelAndView mav = null;
-		try {
-			mav = handlerAdapter.handle(request, response, controller);
-		} catch (Exception e) {
-			Assert.fail("Expecting no exception, got: ",e);
-		}
-		ModelAndViewAssert.assertViewName(mav, DailySalesController.VIEW_NAME);
-		ModelAndViewAssert.assertAndReturnModelAttributeOfType(mav, DailySalesController.MODEL_NAME, DailySales.class);
-	}
-	
-	@Test
-	public void testSubmit() {
+	public void testGetDailySalesReport() {
 	    	Store st = new Store("test");
 	    	storeDao.save(st);
 
-			request.setRequestURI("/forms/dailysales");
-			request.setMethod("POST");
-			request.addParameter("date", "06-06-2010");
-			StoreEditor se = new StoreEditor();
-			se.setValue(st);
-			request.addParameter("store", se.getAsText());
-			request.addParameter("sum", "100");
-			Assert.assertTrue(dailySalesDAO.findAll().size() == 0);
+	    	Calendar cal = new GregorianCalendar();
+	    	cal.set(2009, Calendar.APRIL, 21, 15, 16, 17);
+	    	Date date1 = cal.getTime();
+
+	    	DailySales ds1 = new DailySales();
+	    	ds1.setDate(date1);
+	    	ds1.setSum(BigDecimal.valueOf(100));
+	    	ds1.setStore(st);
+	    	dailySalesDAO.save(ds1);
+
+	    	DailySales ds2 = new DailySales();
+	    	ds2.setDate(date1);
+	    	ds2.setSum(BigDecimal.valueOf(200));
+	    	ds2.setStore(st);
+	    	dailySalesDAO.save(ds2);
+	    	
+			request.setRequestURI("/reports/dailysales");
+			request.setMethod("GET");
+
+			ModelAndView mav = null;
 			try {
-				handlerAdapter.handle(request, response, controller);
+				mav = handlerAdapter.handle(request, response, controller);
 			} catch (Exception e) {
 				Assert.fail("Expecting no exception, got: ",e);
 			}
-			List<DailySales> list = dailySalesDAO.findAll();
-			Assert.assertTrue(list.size() == 1);
-			DailySales ds = list.get(0);
-			
-			GregorianCalendar cal = new GregorianCalendar(2010, Calendar.JUNE, 06, 00, 00, 00);
-	    	Date dateSearch = cal.getTime();
 
-			Assert.assertTrue(DateUtils.isSameDay(dateSearch,ds.getDate()));
-			Assert.assertTrue(BigDecimal.valueOf(100).equals(ds.getSum()));
-			Assert.assertTrue(ds.getStoreKey().equals(st.getKey()));
+			List<DailySales> expDailySales = dailySalesDAO.findAll();
+	    	
+	    	ModelAndViewAssert.assertCompareListModelAttribute(mav, DailySalesController.MODEL_NAME, expDailySales);
 	}	
 }

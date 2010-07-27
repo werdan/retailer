@@ -38,10 +38,11 @@ public class DailySalesDAO extends AbstractAppEngineDAO<DailySales> implements I
 	    query.declareParameters("java.util.Date inputDate");
 		try {
 			List<DailySales> list = (List<DailySales>) query.execute(date);
-			if (list.size() != 1) {
-				logger.error("There should be only one instance of DailySales for each date, got : " + list.size());
-				throw new IllegalStateException("There should be only one instance of DailySales for each date, got : " + list.size());
-			}
+			if (list.size() > 1) {
+				throw new IllegalStateException("There should be only one instance, but got : " + list.size());
+			} else if (list.size() == 0) {
+				return null;
+			} 
 			return initUnownedRelations(list.get(0));
         } finally {
             query.closeAll();

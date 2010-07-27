@@ -1,3 +1,4 @@
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <html>
@@ -12,6 +13,7 @@
    <link href="/css/main.css" media="screen" rel="stylesheet" type="text/css" /> 
    <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
    <script type="text/javascript" src="/js/main.js"></script>
+   <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 </head>
 <body>
     <tiles:insertAttribute name="header" />

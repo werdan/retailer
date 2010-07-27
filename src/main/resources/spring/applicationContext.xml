@@ -19,8 +19,9 @@
 	</bean>
 
 
-	<import resource="services.xml" />
 	<import resource="tilesConfigurer.xml" />
+
 	<import resource="mvc.xml" />
 	<import resource="dao.xml" />
+	<import resource="services.xml" />
 </beans>

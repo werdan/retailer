@@ -53,9 +53,11 @@ public abstract class AbstractAppEngineDAO<T extends KeyEnabled> implements Gene
 
 	    PersistenceManager pm = pmlocator.getPersistenceManager();
 		Query query = pm.newQuery("SELECT FROM " + modelClass.getName());
+		query.setFilter("key == entityKey");
+		query.declareParameters("com.google.appengine.api.datastore.Key entityKey");
 	    query.setUnique(true);
 		try {
-	    	T result = (T) query.execute();
+	    	T result = (T) query.execute(key);
 	    	return initUnownedRelations(result);
         } finally {
         	query.closeAll();

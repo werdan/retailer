@@ -1,12 +1,7 @@
 package fr.smile.retailer.web.controller;
 
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -24,22 +19,16 @@ import org.testng.annotations.Test;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
-import fr.smile.retailer.dao.interfaces.IDailySalesDAO;
 import fr.smile.retailer.dao.interfaces.IStoreDAO;
-import fr.smile.retailer.model.DailySales;
 import fr.smile.retailer.model.Store;
 import fr.smile.retailer.web.propertyeditors.StoreEditor;
 
 @ContextConfiguration(locations = { "classpath:spring/testApplicationContext.xml"})
-public class DailySalesControllerTest extends AbstractTestNGSpringContextTests {
+public class StoreControllerTest extends AbstractTestNGSpringContextTests {
 
 	@Autowired
-	private DailySalesController controller;
+	private StoresController controller;
 
-	@Autowired
-	private IDailySalesDAO dailySalesDAO;
-
-	
 	private HandlerAdapter handlerAdapter;
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
@@ -65,7 +54,7 @@ public class DailySalesControllerTest extends AbstractTestNGSpringContextTests {
 	
 	@Test
 	public void testGetNew() {
-		request.setRequestURI("/forms/dailysales");
+		request.setRequestURI("/forms/store");
 		request.setMethod("GET");
 		ModelAndView mav = null;
 		try {
@@ -73,37 +62,25 @@ public class DailySalesControllerTest extends AbstractTestNGSpringContextTests {
 		} catch (Exception e) {
 			Assert.fail("Expecting no exception, got: ",e);
 		}
-		ModelAndViewAssert.assertViewName(mav, DailySalesController.VIEW_NAME);
-		ModelAndViewAssert.assertAndReturnModelAttributeOfType(mav, DailySalesController.MODEL_NAME, DailySales.class);
+		ModelAndViewAssert.assertViewName(mav, controller.VIEW_NAME);
+		ModelAndViewAssert.assertAndReturnModelAttributeOfType(mav, controller.MODEL_NAME, Store.class);
 	}
 	
 	@Test
 	public void testSubmit() {
-	    	Store st = new Store("test");
-	    	storeDao.save(st);
-
-			request.setRequestURI("/forms/dailysales");
+			request.setRequestURI("/forms/store");
 			request.setMethod("POST");
-			request.addParameter("date", "06-06-2010");
-			StoreEditor se = new StoreEditor();
-			se.setValue(st);
-			request.addParameter("store", se.getAsText());
-			request.addParameter("sum", "100");
-			Assert.assertTrue(dailySalesDAO.findAll().size() == 0);
+			request.addParameter("name", "testname");
+			Assert.assertTrue(storeDao.findAll().size() == 0);
 			try {
 				handlerAdapter.handle(request, response, controller);
 			} catch (Exception e) {
 				Assert.fail("Expecting no exception, got: ",e);
 			}
-			List<DailySales> list = dailySalesDAO.findAll();
-			Assert.assertTrue(list.size() == 1);
-			DailySales ds = list.get(0);
+			Assert.assertTrue(storeDao.findAll().size() == 1);
+			List<Store> list = storeDao.findAll();
+			Store store = list.get(0);
 			
-			GregorianCalendar cal = new GregorianCalendar(2010, Calendar.JUNE, 06, 00, 00, 00);
-	    	Date dateSearch = cal.getTime();
-
-			Assert.assertTrue(DateUtils.isSameDay(dateSearch,ds.getDate()));
-			Assert.assertTrue(BigDecimal.valueOf(100).equals(ds.getSum()));
-			Assert.assertTrue(ds.getStoreKey().equals(st.getKey()));
+			Assert.assertEquals(store.getName(),"testname");
 	}	
 }

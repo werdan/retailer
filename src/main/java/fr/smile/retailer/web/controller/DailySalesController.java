@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import fr.smile.retailer.dao.AbstractAppEngineDAO;
-import fr.smile.retailer.dao.StoreDAO;
 import fr.smile.retailer.dao.interfaces.IDailySalesDAO;
 import fr.smile.retailer.dao.interfaces.IStoreDAO;
 import fr.smile.retailer.model.DailySales;
@@ -35,7 +33,7 @@ public class DailySalesController {
 	private Logger logger = Logger.getLogger(this.getClass());
 	public final static String VIEW_NAME = "dailysales";	
 	public final static String MODEL_NAME = "dailysales";
-	
+		
 	@Autowired
 	private IDailySalesDAO dailySalesDAO;
 	
@@ -48,23 +46,37 @@ public class DailySalesController {
     public void initBinder(WebDataBinder dataBinder) {
         dataBinder.registerCustomEditor(Date.class, new DateEditor());
         dataBinder.registerCustomEditor(Store.class, storePropEditor);
+        
         dataBinder.setIgnoreUnknownFields(false);
     }
 	
-	@RequestMapping(value="/forms/dailysales", method=RequestMethod.GET)
-	public ModelAndView getNew(){
-		return new ModelAndView(VIEW_NAME);
-	}
+	/**
+	 * Attributes of the model
+	 * @return
+	 */
 	
 	@ModelAttribute("stores")
 	public List<Store> getStores() {
 		return storeDao.findAll();
 	}
-
 	
+	@ModelAttribute("alldailysales") 
+	public List<DailySales> getAllDailySales() {
+		return dailySalesDAO.findAll();
+	}
+
 	@ModelAttribute(MODEL_NAME)
 	public DailySales getNewDailySales() {
 		return new DailySales();
+	}
+
+	/**
+	 * Request mappings
+	 * 
+	 */
+	@RequestMapping(value="/forms/dailysales", method=RequestMethod.GET)
+	public ModelAndView getNew(){
+		return new ModelAndView(VIEW_NAME);
 	}
 
 	@RequestMapping(value="/forms/dailysales/{date}", method=RequestMethod.GET)
@@ -76,8 +88,8 @@ public class DailySalesController {
 		
 	@RequestMapping(value="/forms/dailysales", method=RequestMethod.POST)
 	public ModelAndView submit(@ModelAttribute DailySales dailySales, BindingResult result) {
-		dailySalesDAO.save(dailySales);
 		ModelAndView mav = new ModelAndView("redirect:" + VIEW_NAME);
+		dailySalesDAO.save(dailySales);
 		return mav;
 	}
 }

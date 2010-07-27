@@ -10,8 +10,11 @@ import javax.jdo.PersistenceManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -35,8 +38,7 @@ public class DailySalesDAOTest extends AbstractTestNGSpringContextTests {
 	@Autowired
 	private IStoreDAO storeDao;
     
-	@Autowired
-	private AppEngineDBLocalConfig helper;
+	private LocalServiceTestHelper helper = null;
 
     @AfterMethod
     public void tearDown() {
@@ -45,6 +47,7 @@ public class DailySalesDAOTest extends AbstractTestNGSpringContextTests {
 	
 	@BeforeMethod
 	public void setUp() {
+		helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 		helper.setUp();
 	}
 
@@ -122,7 +125,7 @@ public class DailySalesDAOTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void testStore() {
+    public void testStoreByKey() {
     	Calendar cal = new GregorianCalendar();
     	cal.set(2009, Calendar.APRIL, 21, 15, 16, 17);
     	Date date1 = cal.getTime();
@@ -134,6 +137,17 @@ public class DailySalesDAOTest extends AbstractTestNGSpringContextTests {
 
     	ds1.setStore(st);
     	dailySalesDAO.save(ds1);
+
+    	cal.set(2009, Calendar.APRIL, 22, 15, 16, 17);
+    	Date date2 = cal.getTime();
+    	DailySales ds2 = new DailySales();
+    	ds1.setDate(date2);
+    	ds1.setSum(BigDecimal.valueOf(140));
+    	
+    	Store st2 = new Store("test2");
+    	
+    	ds2.setStore(st2);
+    	dailySalesDAO.save(ds2);
     	
     	DailySales dsResult = dailySalesDAO.getEntityByKey(ds1.getKey());
     	Assert.assertEquals(storeDao.getEntityByKey(dsResult.getStore().getKey()), st);

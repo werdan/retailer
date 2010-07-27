@@ -10,11 +10,10 @@
 	<bean id="appEnginePersistenceManagerLocator"
 		class="fr.smile.retailer.dao.AppEnginePersistenceManagerLocator"/>
 
-
 	<bean id="dailySalesDAO" class="fr.smile.retailer.dao.DailySalesDAO"/>
 	<bean id="storeDAO" class="fr.smile.retailer.dao.StoreDAO"/>
+	<bean id="stocktakeDAO" class="fr.smile.retailer.dao.StocktakeDAO"/>
+	<bean id="deliveryDAO" class="fr.smile.retailer.dao.DeliveryDAO"/>
+	<bean id="productDAO" class="fr.smile.retailer.dao.ProductDAO"/>
 
-	<bean class="fr.smile.retailer.dao.AppEngineDBLocalConfig">
-		<property name="production" value="${production}"/>
-	</bean>
 </beans>

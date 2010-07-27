@@ -11,11 +11,10 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.appengine.api.datastore.Key;
 
-import fr.smile.retailer.dao.interfaces.IStoreDAO;
+import fr.smile.retailer.web.propertyeditors.DateEditor;
 
 @PersistenceCapable
 public class DailySales implements KeyEnabled {
@@ -69,12 +68,25 @@ public class DailySales implements KeyEnabled {
 
 	public void setStore(Store store) {
 		this.store = store;
+		if (store != null) {
+			this.storeKey = store.getKey();
+		}
 	}
 
 	public Store getStore() {
 		return store;
 	}
 
+	/** 
+	 * Used in JSP to represent date of DailySales as bean property
+	 * @return
+	 */
+	public String getShortDate() {
+		DateEditor de = new DateEditor();
+		de.setValue(this.date);
+		return de.getAsText();
+	}
+	
 	public boolean equals(Object o) {
 		if (o instanceof DailySales) {
 			DailySales ds = (DailySales) o;

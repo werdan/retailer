@@ -9,7 +9,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
-public class Store implements KeyEnabled{
+public class Product implements KeyEnabled{
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -20,6 +20,9 @@ public class Store implements KeyEnabled{
 
 	@NotPersistent
 	private int cachedHashCode;
+
+	@Persistent
+	private String code;
 	
 	public void setName(String name) {
 		this.name = name;
@@ -29,16 +32,9 @@ public class Store implements KeyEnabled{
 		return name;
 	}
 
-	public Store(String name) {
-		super();
-		setName(name);
-	}
-	
-	public Store() {}
-
 	public boolean equals(Object o) {
-		if (o instanceof Store) {
-			Store os = (Store) o;
+		if (o instanceof Product) {
+			Product os = (Product) o;
 			if (getName() != null && os.getName() != null) {
 				return getName().equals(os.getName());
 			} else {
@@ -55,12 +51,16 @@ public class Store implements KeyEnabled{
 		return cachedHashCode;
 	}
 
+	@Override
 	public Key getKey() {
 		return key;
 	}
 
-	public void setKey(Key key) {
-		this.key = key;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
+	public String getCode() {
+		return this.code;
+	}
 }

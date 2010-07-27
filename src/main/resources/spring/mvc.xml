@@ -19,8 +19,17 @@
 
 	<!-- Controllers -->
 	<bean class="fr.smile.retailer.web.controller.DailySalesController" />
+	<bean class="fr.smile.retailer.web.controller.StoresController" />
+	<bean class="fr.smile.retailer.web.controller.ReportsController" />
+	<bean class="fr.smile.retailer.web.controller.StocktakeController" />
 	
 	<!-- Property Editors -->
 	<bean class="fr.smile.retailer.web.propertyeditors.StoreEditor"/>
+
+	<!-- File uploader -->
+	<bean id="multipartResolver" class="fr.smile.retailer.web.multipart.StreamingMultipartResolver">
+		<property name="maxUploadSize" value="1000000"/>
+	</bean>
+	
 
 </beans>
