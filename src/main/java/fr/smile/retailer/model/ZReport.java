@@ -13,16 +13,16 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 
 /**
- * Persistence class that reflect the process of verification the stock/warehouse state
+ * Persistence class that reflect ZReport of EKKA
  * <br/>
  * <br/>
- * Used to show real quantities of products in stock at current time
+ * Used to show quantities of products in stock at current time according to data in EKKA
  * 
  * @author ansam
  *
  */
 @PersistenceCapable
-public class Stocktake implements KeyEnabled {
+public class ZReport implements KeyEnabled {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -34,18 +34,12 @@ public class Stocktake implements KeyEnabled {
 	@Persistent
 	private Key storeKey;
 	
-	@Persistent
-	private Key zreportKey;
-	
-	@Persistent(mappedBy = "stocktake", defaultFetchGroup = "true")
+	@Persistent(mappedBy = "zreport", defaultFetchGroup = "true")
 	@Element(dependent = "true")
-	private List<StocktakeItem> items;
+	private List<ZReportItem> items;
 	
 	@NotPersistent
 	private Store store;
-
-	@NotPersistent
-	private ZReport zreport;
 	
 	public Date getDate() {
 		return date;
@@ -74,36 +68,17 @@ public class Stocktake implements KeyEnabled {
 		return store;
 	}
 
-	public void setItems(List<StocktakeItem> items) {
+	public void setItems(List<ZReportItem> items) {
 		this.items = items;
 	}
 
-	public List<StocktakeItem> getItems() {
+	public List<ZReportItem> getItems() {
 		return items;
 	}
 
 	@Override
 	public Key getKey() {
 		return key;
-	}
-
-	public void setZreportKey(Key zreportKey) {
-		this.zreportKey = zreportKey;
-	}
-
-	public Key getZreportKey() {
-		return zreportKey;
-	}
-
-	public void setZreport(ZReport zreport) {
-		if (zreport != null) {
-			this.zreportKey = zreport.getKey();
-		}
-		this.zreport = zreport;
-	}
-
-	public ZReport getZreport() {
-		return zreport;
 	}
 	
 }

@@ -1,14 +1,10 @@
 package fr.smile.retailer.web.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -20,11 +16,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import fr.smile.retailer.dao.interfaces.GenericDAO;
 import fr.smile.retailer.dao.interfaces.IStocktakeDAO;
 import fr.smile.retailer.dao.interfaces.IStoreDAO;
+import fr.smile.retailer.dao.interfaces.IZReportDAO;
 import fr.smile.retailer.model.Stocktake;
+import fr.smile.retailer.model.StocktakeItem;
 import fr.smile.retailer.model.Store;
+import fr.smile.retailer.model.ZReport;
+import fr.smile.retailer.model.ZReportItem;
+import fr.smile.retailer.services.interfaces.IStocktakeService;
+import fr.smile.retailer.services.interfaces.IZReportService;
 import fr.smile.retailer.utils.SimpleXLSParser;
+import fr.smile.retailer.web.propertyeditors.DateEditor;
 import fr.smile.retailer.web.propertyeditors.StoreEditor;
 
 /**
@@ -42,14 +46,29 @@ public class StocktakeController {
 	
 	@Autowired
 	public IStocktakeDAO stocktakeDao;
+	
 	@Autowired
 	public StoreEditor storePropEditor;
+	
 	@Autowired
 	public IStoreDAO storeDao;
+
+	@Autowired
+	private SimpleXLSParser parser;
+	
+	@Autowired
+	private IStocktakeService stocktakeService;
+	
+	@Autowired
+	private IZReportService zreportService;
+	
+	@Autowired
+	private IZReportDAO zreportDao;
 
 	@InitBinder
 	public void initBinder(WebDataBinder dataBinder) {
 		dataBinder.registerCustomEditor(Store.class, storePropEditor);
+		dataBinder.registerCustomEditor(Date.class, new DateEditor());
 		dataBinder.setIgnoreInvalidFields(true);
 		dataBinder.setIgnoreUnknownFields(false);
 	}
@@ -81,10 +100,28 @@ public class StocktakeController {
 
 	
 	@RequestMapping(value = "/forms/stocktake", method = RequestMethod.POST)
-	public String submit(@RequestParam("store") String storeKey, 
-						 @RequestParam("file") MultipartFile file,
-						 @RequestParam("date") String dateShort) throws IOException {
-		if (!file.isEmpty()) {
+	@SuppressWarnings("unchecked")
+	public String submit(@RequestParam("store") Store store, 
+						 @RequestParam("stocktakexls") MultipartFile stockFile,
+						 @RequestParam("zreportxls") MultipartFile zreportFile,
+						 @RequestParam("date") Date dateShort) throws IOException {
+		if (!stockFile.isEmpty() && !zreportFile.isEmpty()) {
+			logger.debug("Parsing Stocktake Excel document");
+			List<StocktakeItem> stocktakeItemsList = (List<StocktakeItem>) parser.parse(stockFile.getInputStream(), stocktakeService);
+			Stocktake take = new Stocktake();
+			take.setDate(dateShort);
+			take.setStore(store);
+			take.setItems(stocktakeItemsList);
+
+			logger.debug("Parsing ZReport Excel document");
+			List<ZReportItem> zReportItemsList = (List<ZReportItem>) parser.parse(zreportFile.getInputStream(), zreportService);
+			ZReport zreport = new ZReport();
+			zreport.setItems(zReportItemsList);
+			zreportDao.save(zreport);
+			
+			take.setZreport(zreport);
+			
+			stocktakeDao.save(take);
 			
 			return "redirect:/home/index";			
 		} else {

@@ -7,6 +7,7 @@
 	 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<bean class="fr.smile.retailer.services.StocktakeService"/>
+	<bean class="fr.smile.retailer.services.ZReportService"/>
 
 	<bean class="fr.smile.retailer.utils.SimpleXLSParser"/>
 

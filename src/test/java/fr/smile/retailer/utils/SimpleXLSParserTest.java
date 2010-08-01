@@ -2,7 +2,6 @@ package fr.smile.retailer.utils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,9 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import fr.smile.retailer.dao.interfaces.IProductDAO;
 import fr.smile.retailer.model.Product;
 import fr.smile.retailer.model.StocktakeItem;
-import fr.smile.retailer.services.StocktakeService;
+import fr.smile.retailer.model.ZReportItem;
+import fr.smile.retailer.services.interfaces.IStocktakeService;
+import fr.smile.retailer.services.interfaces.IZReportService;
 
 @ContextConfiguration(locations = { "classpath:spring/testApplicationContext.xml"})
 public class SimpleXLSParserTest extends AbstractTestNGSpringContextTests {
@@ -36,9 +37,12 @@ public class SimpleXLSParserTest extends AbstractTestNGSpringContextTests {
 	private IProductDAO productDao;
 	
 	@Autowired
-	private StocktakeService stocktakeService;
+	private IStocktakeService stocktakeService;
 	
 	private LocalServiceTestHelper helper = null;
+
+	@Autowired
+	private IZReportService zreportService;
 
     @AfterMethod
     public void tearDown() {
@@ -72,5 +76,28 @@ public class SimpleXLSParserTest extends AbstractTestNGSpringContextTests {
 		Assert.assertTrue(stocktakeItemsList.get(0).getQuantity().compareTo(BigDecimal.valueOf(14.123d)) == 0 );
 		Assert.assertTrue(stocktakeItemsList.get(1).getProduct().getName().equals("test2"));
 		Assert.assertTrue(stocktakeItemsList.get(1).getQuantity().compareTo(BigDecimal.valueOf(22.112d)) == 0 );
+	}
+	
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testNotFirstHeaderLine() throws IOException {
+    	Product pr1 = new Product();
+    	pr1.setName("test1");
+    	pr1.setCode("1");
+    	productDao.save(pr1);
+    	
+    	Product pr2 = new Product();
+    	pr2.setName("test2");
+    	pr2.setCode("2");
+    	productDao.save(pr2);
+
+		Resource res = loader.getResource("classpath:/testfiles/ZReport.xls");
+		List<ZReportItem> zreportItemsList = (List<ZReportItem>) parser.parse(res.getInputStream(), zreportService);
+		
+		Assert.assertTrue(zreportItemsList.size() == 65, "Expected 66 , but got " + zreportItemsList.size());
+		Assert.assertTrue(zreportItemsList.get(0).getProduct().getName().equals("test1"));
+		Assert.assertTrue(zreportItemsList.get(0).getQuantity().compareTo(BigDecimal.valueOf(2.51d)) == 0 );
+		Assert.assertTrue(zreportItemsList.get(1).getProduct().getName().equals("test2"));
+		Assert.assertTrue(zreportItemsList.get(1).getQuantity().compareTo(BigDecimal.valueOf(12.785d)) == 0 );
 	}
 }
