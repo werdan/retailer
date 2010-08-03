@@ -32,6 +32,9 @@ public class StocktakeItem implements KeyEnabled, XLSLineModel {
 	@Persistent
 	private Key productKey;
 	
+	@Persistent
+	private BigDecimal cost;
+	
 	@NotPersistent
 	private Product product;
 	
@@ -73,6 +76,14 @@ public class StocktakeItem implements KeyEnabled, XLSLineModel {
 	@Override
 	public Key getKey() {
 		return key;
+	}
+
+	public void setCost(BigDecimal cost) {
+		this.cost = cost;
+	}
+
+	public BigDecimal getCost() {
+		return cost;
 	}
 
 }

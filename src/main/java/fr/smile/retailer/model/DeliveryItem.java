@@ -1,6 +1,9 @@
 package fr.smile.retailer.model;
 
+import java.math.BigDecimal;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -13,7 +16,7 @@ import com.google.appengine.api.datastore.Key;
  *
  */
 @PersistenceCapable
-public class DeliveryItem {
+public class DeliveryItem implements XLSLineModel {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -23,8 +26,37 @@ public class DeliveryItem {
 	private Delivery delivery;
 		
 	@Persistent
+	private Key supplierKey;
+
+	@Persistent
 	private Product product;
+
+	/**
+	 * Net price after excluding of products that can be used (trashed == true)
+	 */
+	@Persistent
+	private BigDecimal cost;
+
+	/**
+	 * Quantity of products delivered
+	 */
+	@Persistent
+	private BigDecimal quantity;
+
+	/**
+	 * Price as stated by supplier
+	 */
+	@Persistent
+	private BigDecimal price;
 	
+	/**
+	 * If product can not be selled, it is trashed (e.g., bones)
+	 */
+	@Persistent
+	private boolean trashed;
+
+	@NotPersistent
+	private Supplier supplier;
 
 	public void setProduct(Product product) {
 		this.product = product;
@@ -43,6 +75,54 @@ public class DeliveryItem {
 
 	public Delivery getDelivery() {
 		return delivery;
+	}
+
+	public void setCost(BigDecimal cost) {
+		this.cost = cost;
+	}
+
+	public BigDecimal getCost() {
+		return cost;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setTrashed(boolean trashed) {
+		this.trashed = trashed;
+	}
+
+	public boolean isTrashed() {
+		return trashed;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setSupplierKey(Key supplierKey) {
+		this.supplierKey = supplierKey;
+	}
+
+	public Key getSupplierKey() {
+		return supplierKey;
+	}
+
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
+	}
+
+	public Supplier getSupplier() {
+		return supplier;
 	}
 
 }

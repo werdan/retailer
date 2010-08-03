@@ -1,9 +1,11 @@
 package fr.smile.retailer.web.controller;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +34,10 @@ import fr.smile.retailer.dao.interfaces.IStocktakeDAO;
 import fr.smile.retailer.dao.interfaces.IStoreDAO;
 import fr.smile.retailer.dao.interfaces.IZReportDAO;
 import fr.smile.retailer.model.Stocktake;
+import fr.smile.retailer.model.StocktakeItem;
 import fr.smile.retailer.model.Store;
 import fr.smile.retailer.model.ZReport;
+import fr.smile.retailer.model.ZReportItem;
 import fr.smile.retailer.services.interfaces.IStocktakeService;
 import fr.smile.retailer.web.propertyeditors.StoreEditor;
 
@@ -127,6 +131,12 @@ public class StocktakeControllerTest extends AbstractTestNGSpringContextTests {
 			ZReport zreport = zreportDao.getEntityByKey(take.getZreportKey());
 			Assert.assertNotNull(zreport.getKey());
 			Assert.assertTrue(zreport.getItems().size() == 65);
+			
+			//Check that costs are filled-in
+			for (StocktakeItem stocktakeItem: take.getItems()) {
+				Assert.assertNotNull(stocktakeItem.getCost());
+				Assert.assertTrue(stocktakeItem.getCost().compareTo(new BigDecimal(0)) == 1);
+			}
 			
 			ModelAndViewAssert.assertViewName(mav, "redirect:/home/index");
 	}	

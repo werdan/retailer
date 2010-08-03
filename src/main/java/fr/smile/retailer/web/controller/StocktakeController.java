@@ -120,7 +120,7 @@ public class StocktakeController {
 			zreportDao.save(zreport);
 			
 			take.setZreport(zreport);
-			
+			stocktakeService.calculateCosts(take);
 			stocktakeDao.save(take);
 			
 			return "redirect:/home/index";			

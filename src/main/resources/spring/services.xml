@@ -8,6 +8,7 @@
 
 	<bean class="fr.smile.retailer.services.StocktakeService"/>
 	<bean class="fr.smile.retailer.services.ZReportService"/>
+	<bean class="fr.smile.retailer.services.DeliveryService"/>
 
 	<bean class="fr.smile.retailer.utils.SimpleXLSParser"/>
 
