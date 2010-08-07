@@ -70,4 +70,33 @@ public class StocktakeServiceTest extends AbstractTestNGSpringContextTests {
     	Assert.assertTrue(item.getQuantity().compareTo(BigDecimal.valueOf(24.25d)) == 0);
     	
     }
+    
+    @Test
+    public void testCreateItemNoSuchProduct() {
+    	Product pr1 = new Product();
+    	pr1.setName("test1");
+    	pr1.setCode("1");
+    	productDao.save(pr1);
+    	
+    	Product pr2 = new Product();
+    	pr2.setName("test2");
+    	pr2.setCode("2");
+    	productDao.save(pr2);
+    	
+    	Product pr3 = new Product();
+    	pr3.setName("test3");
+    	pr3.setCode("3");
+    	productDao.save(pr3);
+    	
+    	List<String> values = new ArrayList<String>();
+    	values.add("4");
+    	values.add("Ошеек свиной");
+    	values.add(BigDecimal.valueOf(24.25d).toString());
+
+    	try {
+    		StocktakeItem item = (StocktakeItem) stocktakeService.createItem(values);
+    	} catch (IllegalArgumentException e) {
+    		Assert.assertTrue(true);
+    	}
+    }
 }

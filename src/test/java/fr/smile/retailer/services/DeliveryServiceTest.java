@@ -45,7 +45,7 @@ public class DeliveryServiceTest extends AbstractTestNGSpringContextTests {
 
     
     @Test
-    public void testCreateItem() {
+    public void testCreateItemAndCalculateCosts() {
     	Product pr1 = new Product();
     	pr1.setName("test1");
     	pr1.setCode("1");
@@ -63,13 +63,12 @@ public class DeliveryServiceTest extends AbstractTestNGSpringContextTests {
     	
     	List<String> values = new ArrayList<String>();
     	values.add("1");
-    	values.add("Ошеек свиной");
     	//Quantity
     	values.add(BigDecimal.valueOf(24.25d).toString());
     	//Price
     	values.add(BigDecimal.valueOf(33.123d).toString());
     	//Trashed
-    	values.add("");
+    	values.add("нет");
     	DeliveryItem item = (DeliveryItem) deliveryService.createItem(values);
     	
     	
@@ -79,24 +78,22 @@ public class DeliveryServiceTest extends AbstractTestNGSpringContextTests {
     	
     	values = new ArrayList<String>();
     	values.add("2");
-    	values.add("Вырезка-2");
     	//Quantity
     	values.add(BigDecimal.valueOf(12.25d).toString());
     	//Price
     	values.add(BigDecimal.valueOf(33.123d).toString());
     	//Trashed
-    	values.add("");
+    	values.add("нет");
     	DeliveryItem item2 = (DeliveryItem) deliveryService.createItem(values);
 
     	values = new ArrayList<String>();
     	values.add("3");
-    	values.add("Вырезка");
     	//Quantity
     	values.add(BigDecimal.valueOf(2.3d).toString());
     	//Price
     	values.add(BigDecimal.valueOf(0).toString());
     	//Trashed
-    	values.add("1");
+    	values.add("да");
     	DeliveryItem item3 = (DeliveryItem) deliveryService.createItem(values);
     	
     	Delivery delivery = new Delivery();
@@ -119,4 +116,68 @@ public class DeliveryServiceTest extends AbstractTestNGSpringContextTests {
     		Assert.assertTrue(itemToCheck.getCost().compareTo(targetCost) == 0);
     	}
     }
+    
+    @Test
+    public void createItemTrashedFalse() {
+    	Product pr3 = new Product();
+    	pr3.setName("test3");
+    	pr3.setCode("3");
+    	productDao.save(pr3);
+    	
+    	List<String> values = new ArrayList<String>();
+    	values.add("3");
+    	//Quantity
+    	values.add(BigDecimal.valueOf(24.25d).toString());
+    	//Price
+    	values.add(BigDecimal.valueOf(33.123d).toString());
+    	//Trashed
+    	values.add("не знаю");
+    	DeliveryItem item = (DeliveryItem) deliveryService.createItem(values);
+    	
+    	Assert.assertFalse(item.isTrashed());
+    }
+
+    @Test
+    public void createItemTrashedTrue() {
+    	Product pr3 = new Product();
+    	pr3.setName("test3");
+    	pr3.setCode("3");
+    	productDao.save(pr3);
+    	
+    	List<String> values = new ArrayList<String>();
+    	values.add("3");
+    	//Quantity
+    	values.add(BigDecimal.valueOf(24.25d).toString());
+    	//Price
+    	values.add(BigDecimal.valueOf(33.123d).toString());
+    	//Trashed
+    	values.add("да");
+    	DeliveryItem item = (DeliveryItem) deliveryService.createItem(values);
+    	
+    	Assert.assertTrue(item.isTrashed());
+    }
+    
+    @Test
+    public void createItemNoSuchProduct() {
+    	Product pr3 = new Product();
+    	pr3.setName("test3");
+    	pr3.setCode("3");
+    	productDao.save(pr3);
+    	
+    	List<String> values = new ArrayList<String>();
+    	values.add("1");
+    	//Quantity
+    	values.add(BigDecimal.valueOf(24.25d).toString());
+    	//Price
+    	values.add(BigDecimal.valueOf(33.123d).toString());
+    	//Trashed
+    	values.add("да");
+    	try {
+    		DeliveryItem item = (DeliveryItem) deliveryService.createItem(values);
+    	} catch (IllegalArgumentException e) {
+    		//it is ok to have this expection
+    	}
+
+    }
+
 }

@@ -22,6 +22,7 @@
 	<bean class="fr.smile.retailer.web.controller.StoresController" />
 	<bean class="fr.smile.retailer.web.controller.ReportsController" />
 	<bean class="fr.smile.retailer.web.controller.StocktakeController" />
+	<bean class="fr.smile.retailer.web.controller.DeliveryController" />
 	
 	<!-- Property Editors -->
 	<bean class="fr.smile.retailer.web.propertyeditors.StoreEditor"/>

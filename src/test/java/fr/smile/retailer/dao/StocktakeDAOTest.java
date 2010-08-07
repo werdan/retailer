@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -115,4 +116,49 @@ public class StocktakeDAOTest extends AbstractTestNGSpringContextTests {
 			Assert.assertTrue(item.getQuantity().intValue() > 1);
 		}
 	}
+	
+	@Test
+	public void testGetLastStocktake() {
+		Store st1 = new Store();
+		st1.setName("store1");
+		storeDao.save(st1);
+
+		Store st2 = new Store();
+		st2.setName("store2");
+		storeDao.save(st2);
+		
+		
+		Stocktake takeOld = new Stocktake();
+		Calendar cal = new GregorianCalendar();
+		takeOld.setDate(DateUtils.addDays(cal.getTime(), -7));
+		takeOld.setStore(st1);
+		stocktakeDao.save(takeOld);
+
+		
+		Stocktake takeOldSt2 = new Stocktake();
+		takeOldSt2.setDate(DateUtils.addDays(cal.getTime(), -7));
+		takeOldSt2.setStore(st2);
+		stocktakeDao.save(takeOldSt2);
+
+		Stocktake takeVOld = new Stocktake();
+		takeVOld.setDate(DateUtils.addDays(cal.getTime(), -14));
+		takeVOld.setStore(st1);
+		stocktakeDao.save(takeVOld);
+		
+		Stocktake takeVVOld = new Stocktake();
+		takeVVOld.setDate(DateUtils.addDays(cal.getTime(), -21));
+		takeVVOld.setStore(st1);
+		stocktakeDao.save(takeVVOld);
+		
+		
+		Filter filter = new Filter("date < nowDate && storeKey == targetStoreKey", 
+				"java.util.Date nowDate, com.google.appengine.api.datastore.Key targetStoreKey", cal.getTime());
+		filter.setParamValue2(st1.getKey());
+
+		Stocktake lastStocktake = stocktakeDao.findUniqueFiltered(filter, "date desc");
+		Assert.assertNotNull(lastStocktake);
+		Assert.assertTrue(DateUtils.isSameDay(lastStocktake.getDate(),DateUtils.addDays(cal.getTime(), -7))); 
+		Assert.assertTrue(lastStocktake.getKey().equals(takeOld.getKey()));
+	}
+	
 }

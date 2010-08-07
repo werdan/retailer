@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="fr.smile.retailer.utils.CustromNumberUtilsTest" failures="2" tests="2" time="1.249" errors="0">
+  <properties/>
+  <testcase name="testCreateBigDecimal" time="0.01" classname="fr.smile.retailer.utils.CustromNumberUtilsTest">
+    <failure type="java.lang.NumberFormatException" message="A blank string is not a valid number">
+      <![CDATA[java.lang.NumberFormatException: A blank string is not a valid number
+	at fr.smile.retailer.utils.CustomNumberUtils.createBigDecimal(CustomNumberUtils.java:16)
+	at fr.smile.retailer.utils.CustromNumberUtilsTest.testCreateBigDecimal(CustromNumberUtilsTest.java:24)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:158)
+... Removed 28 stack frames]]>
+    </failure>
+  </testcase>
+  <testcase name="testCreateIntegerViaDouble" time="0.0040" classname="fr.smile.retailer.utils.CustromNumberUtilsTest">
+    <failure type="java.lang.NumberFormatException" message="empty String">
+      <![CDATA[java.lang.NumberFormatException: empty String
+	at sun.misc.FloatingDecimal.readJavaFormatString(FloatingDecimal.java:994)
+	at java.lang.Double.valueOf(Double.java:475)
+	at org.apache.commons.lang.math.NumberUtils.createDouble(NumberUtils.java:596)
+	at fr.smile.retailer.utils.CustomNumberUtils.createIntegerViaDouble(CustomNumberUtils.java:26)
+	at fr.smile.retailer.utils.CustromNumberUtilsTest.testCreateIntegerViaDouble(CustromNumberUtilsTest.java:16)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:158)
+... Removed 28 stack frames]]>
+    </failure>
+  </testcase>
+</testsuite>

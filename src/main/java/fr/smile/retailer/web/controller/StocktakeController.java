@@ -28,6 +28,7 @@ import fr.smile.retailer.model.ZReportItem;
 import fr.smile.retailer.services.interfaces.IStocktakeService;
 import fr.smile.retailer.services.interfaces.IZReportService;
 import fr.smile.retailer.utils.SimpleXLSParser;
+import fr.smile.retailer.utils.XLSParser;
 import fr.smile.retailer.web.propertyeditors.DateEditor;
 import fr.smile.retailer.web.propertyeditors.StoreEditor;
 
@@ -53,9 +54,6 @@ public class StocktakeController {
 	@Autowired
 	public IStoreDAO storeDao;
 
-	@Autowired
-	private SimpleXLSParser parser;
-	
 	@Autowired
 	private IStocktakeService stocktakeService;
 	
@@ -107,6 +105,8 @@ public class StocktakeController {
 						 @RequestParam("date") Date dateShort) throws IOException {
 		if (!stockFile.isEmpty() && !zreportFile.isEmpty()) {
 			logger.debug("Parsing Stocktake Excel document");
+
+			XLSParser parser = new SimpleXLSParser();
 			List<StocktakeItem> stocktakeItemsList = (List<StocktakeItem>) parser.parse(stockFile.getInputStream(), stocktakeService);
 			Stocktake take = new Stocktake();
 			take.setDate(dateShort);
@@ -114,6 +114,8 @@ public class StocktakeController {
 			take.setItems(stocktakeItemsList);
 
 			logger.debug("Parsing ZReport Excel document");
+
+			parser = new SimpleXLSParser();
 			List<ZReportItem> zReportItemsList = (List<ZReportItem>) parser.parse(zreportFile.getInputStream(), zreportService);
 			ZReport zreport = new ZReport();
 			zreport.setItems(zReportItemsList);

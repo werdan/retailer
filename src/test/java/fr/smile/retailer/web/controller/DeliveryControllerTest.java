@@ -1,11 +1,8 @@
 package fr.smile.retailer.web.controller;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,24 +25,19 @@ import org.testng.annotations.Test;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
-import fr.smile.retailer.dao.AbstractAppEngineDAO;
-import fr.smile.retailer.dao.StocktakeDAO;
-import fr.smile.retailer.dao.interfaces.IStocktakeDAO;
+import fr.smile.retailer.dao.interfaces.IDeliveryDAO;
+import fr.smile.retailer.dao.interfaces.IProductDAO;
 import fr.smile.retailer.dao.interfaces.IStoreDAO;
-import fr.smile.retailer.dao.interfaces.IZReportDAO;
-import fr.smile.retailer.model.Stocktake;
-import fr.smile.retailer.model.StocktakeItem;
+import fr.smile.retailer.model.Delivery;
+import fr.smile.retailer.model.Product;
 import fr.smile.retailer.model.Store;
-import fr.smile.retailer.model.ZReport;
-import fr.smile.retailer.model.ZReportItem;
-import fr.smile.retailer.services.interfaces.IStocktakeService;
 import fr.smile.retailer.web.propertyeditors.StoreEditor;
 
 @ContextConfiguration(locations = { "classpath:spring/testApplicationContext.xml"})
-public class StocktakeControllerTest extends AbstractTestNGSpringContextTests {
+public class DeliveryControllerTest extends AbstractTestNGSpringContextTests {
 
 	@Autowired
-	private StocktakeController controller;
+	private DeliveryController controller;
 
 	private HandlerAdapter handlerAdapter;
 	private MockMultipartHttpServletRequest request;
@@ -57,17 +49,17 @@ public class StocktakeControllerTest extends AbstractTestNGSpringContextTests {
 	private IStoreDAO storeDao;
 
 	@Autowired
+	private IProductDAO productDao;
+
+	@Autowired
 	private StoreEditor storePropertyEditor;
 
 	@Autowired
-	private IStocktakeDAO stocktakeDao; 
+	private IDeliveryDAO deliveryDao; 
 	
 	@Autowired
 	private ResourceLoader loader;
 
-	@Autowired
-	private IZReportDAO zreportDao;
-	
     @AfterMethod
     public void tearDown() {
         helper.tearDown();
@@ -82,9 +74,9 @@ public class StocktakeControllerTest extends AbstractTestNGSpringContextTests {
 		response = new MockHttpServletResponse();
 	}
 		
-	@Test(enabled=false)
+	@Test
 	public void testSubmit() throws IOException {
-			request.setRequestURI("/forms/stocktake");
+			request.setRequestURI("/forms/delivery");
 			request.setMethod("POST");
 			//Date
 			request.addParameter("date", "18-07-2010");
@@ -95,18 +87,34 @@ public class StocktakeControllerTest extends AbstractTestNGSpringContextTests {
 			storePropertyEditor.setValue(store);
 			request.addParameter("store", storePropertyEditor.getAsText());
 			
-			//Stocktake file
-			Resource res = loader.getResource("classpath:/testfiles/Stocktake.xls");
-			MockMultipartFile mockFile = new MockMultipartFile("stocktakexls", res.getInputStream());
+			//Delivery file
+			Resource res = loader.getResource("classpath:/testfiles/Delivery.xls");
+			MockMultipartFile mockFile = new MockMultipartFile("deliveryxls", res.getInputStream());
 			request.addFile(mockFile);
-
-			//ZReport file
-			Resource res2 = loader.getResource("classpath:/testfiles/ZReport.xls");
-			MockMultipartFile mockFile2 = new MockMultipartFile("zreportxls", res2.getInputStream());
-			request.addFile(mockFile2);
 			
-			Assert.assertTrue(stocktakeDao.findAll().size() == 0);
-			Assert.assertTrue(zreportDao.findAll().size() == 0);
+			Assert.assertTrue(deliveryDao.findAll().size() == 0);
+
+			//Products
+	    	Product pr1 = new Product();
+	    	pr1.setName("test1");
+	    	pr1.setCode("61");
+	    	productDao.save(pr1);
+	    	
+	    	Product pr2 = new Product();
+	    	pr2.setName("test2");
+	    	pr2.setCode("62");
+	    	productDao.save(pr2);
+	    	
+	    	Product pr3 = new Product();
+	    	pr3.setName("test3");
+	    	pr3.setCode("64");
+	    	productDao.save(pr3);
+
+	    	Product pr4 = new Product();
+	    	pr4.setName("test4");
+	    	pr4.setCode("67");
+	    	productDao.save(pr4);
+
 			
 			ModelAndView mav = null;
 			try {
@@ -115,28 +123,16 @@ public class StocktakeControllerTest extends AbstractTestNGSpringContextTests {
 				Assert.fail("Expecting no exception, got: ",e);
 			}
 			
-			Assert.assertTrue(stocktakeDao.findAll().size() == 1);
-			Stocktake take = stocktakeDao.findAll().get(0);
+			Assert.assertTrue(deliveryDao.findAll().size() == 1);
+			Delivery delivery = deliveryDao.findAll().get(0);
 			
-			Store storeGot = storeDao.getEntityByKey(take.getStoreKey());
+			Store storeGot = storeDao.getEntityByKey(delivery.getStoreKey());
 			Assert.assertTrue(storeGot.getName().equals(store.getName()));
 
 			Calendar cal = new GregorianCalendar(2010, Calendar.JULY, 18);
-			Assert.assertTrue(DateUtils.isSameDay(take.getDate(), cal.getTime()));
+			Assert.assertTrue(DateUtils.isSameDay(delivery.getDate(), cal.getTime()));
 			
-			Assert.assertTrue(take.getItems().size() == 2);
-			
-			Assert.assertNotNull(take.getZreportKey());
-			
-			ZReport zreport = zreportDao.getEntityByKey(take.getZreportKey());
-			Assert.assertNotNull(zreport.getKey());
-			Assert.assertTrue(zreport.getItems().size() == 65);
-			
-			//Check that costs are filled-in
-			for (StocktakeItem stocktakeItem: take.getItems()) {
-				Assert.assertNotNull(stocktakeItem.getCost());
-				Assert.assertTrue(stocktakeItem.getCost().compareTo(new BigDecimal(0)) == 1);
-			}
+			Assert.assertTrue(delivery.getItems().size() == 4, "Expecting 4, got " + delivery.getItems().size());
 			
 			ModelAndViewAssert.assertViewName(mav, "redirect:/home/index");
 	}	

@@ -54,6 +54,9 @@ public class Delivery implements KeyEnabled {
 
 	public void setStore(Store store) {
 		this.store = store;
+		if (store != null) {
+			this.storeKey = store.getKey();
+		}
 	}
 
 	public Store getStore() {

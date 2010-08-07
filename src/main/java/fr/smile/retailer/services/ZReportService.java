@@ -1,7 +1,6 @@
 package fr.smile.retailer.services;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import fr.smile.retailer.dao.interfaces.IProductDAO;
 import fr.smile.retailer.model.Product;
 import fr.smile.retailer.model.ZReportItem;
 import fr.smile.retailer.services.interfaces.IZReportService;
+import fr.smile.retailer.utils.CustomNumberUtils;
 
 public class ZReportService implements IZReportService {
 
@@ -18,7 +18,7 @@ public class ZReportService implements IZReportService {
 	private IProductDAO productDao;
 	
 	@Override
-	public ZReportItem createItem(List<String> values) {
+	public ZReportItem createItem(List<String> values) throws IllegalArgumentException{
 		ZReportItem zreportItem = new ZReportItem();
 		
 		
@@ -28,7 +28,10 @@ public class ZReportService implements IZReportService {
 		BigDecimal quantity = new BigDecimal(quantityToParse);
 		quantity = quantity.setScale(3, BigDecimal.ROUND_HALF_EVEN);
 		
-		Product product = productDao.getByCode(new Integer(new Double(code).intValue()).toString());
+		Product product = productDao.getByCode(CustomNumberUtils.createIntegerViaDouble(code).toString());
+		if (product == null) {
+			throw new IllegalArgumentException("Product with code = " + CustomNumberUtils.createIntegerViaDouble(code).toString() + " not found");
+		}
 		zreportItem.setProduct(product);
 		zreportItem.setQuantity(quantity);
 		return zreportItem;

@@ -11,17 +11,13 @@
     </appender>
 
 
-    <logger name="org.springframework">
-        <level value="DEBUG"/>
-    </logger>
-
-    <logger name="ua.goup">
+    <logger name="fr.smile">
         <level value="DEBUG"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
     <root>
-        <priority value="DEBUG"/>
+        <priority value="WARN"/>
         <appender-ref ref="CONSOLE"/>
         <!--appender-ref ref="file_appender"/-->
     </root>

@@ -29,6 +29,9 @@ public class DeliveryItem implements XLSLineModel {
 	private Key supplierKey;
 
 	@Persistent
+	private Key productKey;
+
+	@NotPersistent
 	private Product product;
 
 	/**
@@ -61,7 +64,7 @@ public class DeliveryItem implements XLSLineModel {
 	public void setProduct(Product product) {
 		this.product = product;
 		if (product != null) {
-			this.key = product.getKey();
+			this.productKey = product.getKey();
 		}
 	}
 

@@ -3,18 +3,22 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-  <script type="text/javascript">
+ <script type="text/javascript">
  google.load('visualization', '1', {packages: ['annotatedtimeline']});
 
   function drawVisualization() {
   var data = new google.visualization.DataTable();
-  data.addColumn('date', 'Дата');
-  data.addColumn('number', 'Сумма продаж, грн');
-  data.addRows(${fn:length(dailysales)});
 
-  <c:forEach var="dailysale" items="${dailysales}" varStatus="counter">
-	data.setValue(${counter.count-1},0,new Date("${dailysale.date}"));
-	data.setValue(${counter.count-1},1,${dailysale.sum});
+  <c:forEach var="store" items="${stores}" varStatus="counter">
+  	data.addColumn('date', 'Дата');
+  	
+  	data.addColumn('number', 'Продажи ${store.name}, грн');
+  	data.addRows(${fn:length(dailysales)});
+
+  	<c:forEach var="dailysale" items="${dailysales}" varStatus="counter">
+		data.setValue(${counter.count-1},0,new Date("${dailysale.date}"));
+		data.setValue(${counter.count-1},1,${dailysale.sum});
+ 	 </c:forEach>
   </c:forEach>
 
   var annotatedtimeline = new google.visualization.AnnotatedTimeLine(

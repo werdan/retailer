@@ -17,15 +17,23 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import fr.smile.retailer.dao.XLSLineModelFactory;
 import fr.smile.retailer.model.XLSLineModel;
 
-public class SimpleXLSParser {
+public class SimpleXLSParser implements XLSParser {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
+	/**
+	 * Map<Position of target column in header line,Column index in input list of target columns>
+	 */
 	private Map<Integer,Integer> columnsWithData;
+	private XLSLineModelFactory modelService;
 	
-	
+	/* (non-Javadoc)
+	 * @see fr.smile.retailer.utils.XLSParser#parse(java.io.InputStream, fr.smile.retailer.dao.XLSLineModelFactory)
+	 */
+	@Override
 	public List<? extends XLSLineModel> parse(InputStream in, XLSLineModelFactory modelService) throws IOException {
 		List<XLSLineModel> result = new ArrayList<XLSLineModel>();
 		List<String> columnNames = modelService.getListHeaderLineCells();
+		this.modelService = modelService; 
 		columnsWithData = null;
 		
 		logger.debug("Creating model container for lines");
@@ -61,10 +69,14 @@ public class SimpleXLSParser {
 						}
 					} else if (columnNames.size() <= values.size()){
 						logger.debug("Creating item from data line");
-						XLSLineModel lineItem = modelService.createItem(values);
-						result.add(lineItem);
+						try {
+							XLSLineModel lineItem = modelService.createItem(values);
+							result.add(lineItem);
+						} catch (IllegalArgumentException e){
+							logger.warn(e);
+						}
 					} else {
-						logger.warn("Data line contains only " + values.size() + " cells, while expecting " + columnNames.size());
+						logger.warn("Proposed data line contains only " + values.size() + " cells, while expecting " + columnNames.size());
 						logger.warn("Skipping line #" + r);
 					}
 				}
@@ -97,8 +109,9 @@ public class SimpleXLSParser {
 	 * @return
 	 */
 	private List<String> parseOnlyDataColumns(HSSFRow row, int cells) {
-		String[] valuesTemp = new String[3];
+		String[] valuesTemp = new String[modelService.getListHeaderLineCells().size()];
 		for (int c = 0; c < cells; c++) {
+			logger.debug("Parsing cell col=" + c);
 			if (!columnsWithData.containsKey(c)) { 
 				logger.debug("Skiping cell col=" + c + " as we don't need it");
 				continue; 
@@ -140,6 +153,7 @@ public class SimpleXLSParser {
 				values.add(cell.getStringCellValue().trim());
 				break;
 			default:
+				values.add("");
 			}
 			logger.info("CELL col=" + cell.getColumnIndex() + " VALUE=" + values.get(values.size() - 1));
 		}
@@ -147,7 +161,7 @@ public class SimpleXLSParser {
 	}
 
 	/**
-	 * Identify if all necessary for current parsing configuratio columns are present and put them in Map<columnNumber
+	 * Identify if all necessary for current parsing configuration columns are present and put them in Map<columnNumber
 	 * 
 	 * @param columnNames
 	 * @param foundValues
@@ -157,7 +171,7 @@ public class SimpleXLSParser {
 		Map<Integer,Integer> result = new HashMap<Integer,Integer>();
 		for (String columnName : columnNames) {
 			if (foundValues.indexOf(columnName) == -1) {
-				logger.error("Column with name " + columnName + " not found amoung cells in the first row");
+				logger.error("Column with name " + columnName + " not found amoung cells supposed to be header line");
 				return null;
 			} else {
 				result.put(foundValues.indexOf(columnName), counter);

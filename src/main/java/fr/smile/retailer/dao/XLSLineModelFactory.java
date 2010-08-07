@@ -10,6 +10,6 @@ import fr.smile.retailer.model.XLSLineModel;
  *
  */
 public interface XLSLineModelFactory {
-	XLSLineModel createItem(List<String> values);
+	XLSLineModel createItem(List<String> values) throws IllegalArgumentException;
 	List<String> getListHeaderLineCells();
 }

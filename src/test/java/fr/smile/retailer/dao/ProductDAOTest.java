@@ -60,5 +60,12 @@ public class ProductDAOTest extends AbstractTestNGSpringContextTests {
 		Product productTest2 = productDao.getEntityByKey(product2.getKey());
 		Assert.assertNotNull(productTest2);
 	}
+
+	@Test
+	public void testProductByNullKey() {
+		Product product = productDao.getByCode(null);
+		Assert.assertNull(product);
+	}
+
 	
 }

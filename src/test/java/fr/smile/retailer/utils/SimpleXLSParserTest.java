@@ -31,9 +31,6 @@ public class SimpleXLSParserTest extends AbstractTestNGSpringContextTests {
 	private ResourceLoader loader;
 
 	@Autowired
-	private SimpleXLSParser parser;
-	
-	@Autowired
 	private IProductDAO productDao;
 	
 	@Autowired
@@ -69,6 +66,8 @@ public class SimpleXLSParserTest extends AbstractTestNGSpringContextTests {
     	productDao.save(pr2);
 
 		Resource res = loader.getResource("classpath:/testfiles/Stocktake.xls");
+
+		XLSParser parser = new SimpleXLSParser();
 		List<StocktakeItem> stocktakeItemsList = (List<StocktakeItem>) parser.parse(res.getInputStream(), stocktakeService);
 		
 		Assert.assertTrue(stocktakeItemsList.size() == 2);
@@ -92,12 +91,15 @@ public class SimpleXLSParserTest extends AbstractTestNGSpringContextTests {
     	productDao.save(pr2);
 
 		Resource res = loader.getResource("classpath:/testfiles/ZReport.xls");
+
+		XLSParser parser = new SimpleXLSParser();
 		List<ZReportItem> zreportItemsList = (List<ZReportItem>) parser.parse(res.getInputStream(), zreportService);
 		
-		Assert.assertTrue(zreportItemsList.size() == 65, "Expected 66 , but got " + zreportItemsList.size());
+		Assert.assertTrue(zreportItemsList.size() == 2, "Expected 2 , but got " + zreportItemsList.size());
 		Assert.assertTrue(zreportItemsList.get(0).getProduct().getName().equals("test1"));
 		Assert.assertTrue(zreportItemsList.get(0).getQuantity().compareTo(BigDecimal.valueOf(2.51d)) == 0 );
 		Assert.assertTrue(zreportItemsList.get(1).getProduct().getName().equals("test2"));
 		Assert.assertTrue(zreportItemsList.get(1).getQuantity().compareTo(BigDecimal.valueOf(12.785d)) == 0 );
 	}
+	
 }

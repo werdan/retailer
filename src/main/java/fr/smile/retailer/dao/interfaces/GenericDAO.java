@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.google.appengine.api.datastore.Key;
 
+import fr.smile.retailer.dao.Filter;
+
 
 /**
  * Interface for AbstractDAO to be implemented by every DAO
@@ -31,11 +33,9 @@ public interface GenericDAO<T> {
 
     List<T> findAll(String orderBy);
 
-    List<T> findFiltered(String property,
-                         Object filter);
+    List<T> findFiltered(Filter filter);
 
-    List<T> findFiltered(String property,
-                         Object filter, String orderBy);
+    List<T> findFiltered(Filter filter, String orderBy);
 
     /**
      * Returns list of items that have property set to NULL
@@ -46,12 +46,10 @@ public interface GenericDAO<T> {
      */
     List<T> findFilteredIsNull(String property, String orderBy);
 
-    Object findUniqueFiltered(String property,
-                              Object filter);
-
-    Object findUniqueFiltered(String property,
-                              Object filter, String orderBy);
+    T findUniqueFiltered(Filter filter);
 
     void refresh(Object entity);
+
+	T findUniqueFiltered(Filter filter, String orderBy);
     
 }

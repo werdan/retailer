@@ -117,13 +117,13 @@ public abstract class AbstractAppEngineDAO<T extends KeyEnabled> implements Gene
 	}
 
 	@Override
-	public List<T> findFiltered(String property, Object filter) {
+	public List<T> findFiltered(Filter filter) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<T> findFiltered(String property, Object filter, String orderBy) {
+	public List<T> findFiltered(Filter filter, String orderBy) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -135,15 +135,47 @@ public abstract class AbstractAppEngineDAO<T extends KeyEnabled> implements Gene
 	}
 
 	@Override
-	public Object findUniqueFiltered(String property, Object filter) {
-		// TODO Auto-generated method stub
-		return null;
+	public T findUniqueFiltered(Filter filter) {
+		return findUniqueFiltered(filter, null);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object findUniqueFiltered(String property, Object filter, String orderBy) {
-		// TODO Auto-generated method stub
-		return null;
+	public T findUniqueFiltered(Filter filter, String orderBy) {
+	    PersistenceManager pm = getPersistenceManagerLocator().getPersistenceManager();
+		Query query = pm.newQuery("SELECT FROM " + modelClass.getName());
+		query.setFilter(filter.getFilterExpession());
+		query.declareParameters(filter.getParamExpression());
+		if (orderBy != null) {
+			query.setOrdering(orderBy);
+		}
+		try {
+			List<T> list = null;
+			switch (filter.getParamNumber()) {
+				case 1: { 
+					list = (List<T>) query.execute(filter.getParamValue());
+					break;
+				}
+				case 2: { 
+					list = (List<T>) query.execute(filter.getParamValue(),filter.getParamValue2());
+					break;
+				}
+				case 3: { 
+					list = (List<T>) query.execute(filter.getParamValue(),filter.getParamValue2(), filter.getParamValue3());
+					break;
+				}
+				default: 
+			}
+			if (list != null && list.size() != 0) {
+				return initUnownedRelations(list.get(0));
+			} else {
+				return null;
+			}
+        } finally {
+        	query.closeAll();
+        	pm.close();
+        }
+
 	}
 
 	@Override
