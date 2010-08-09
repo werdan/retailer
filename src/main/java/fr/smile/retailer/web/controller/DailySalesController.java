@@ -55,7 +55,7 @@ public class DailySalesController {
 	 * @return
 	 */
 	
-	@ModelAttribute("stores")
+	@ModelAttribute(StoreController.MODEL_NAME + "s")
 	public List<Store> getStores() {
 		return storeDao.findAll();
 	}

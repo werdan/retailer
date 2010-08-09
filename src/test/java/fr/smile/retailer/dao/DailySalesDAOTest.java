@@ -106,22 +106,31 @@ public class DailySalesDAOTest extends AbstractTestNGSpringContextTests {
     
     @Test
     public void testFindAll() {
+    	Store st = new Store("test");
+    	storeDao.save(st);
+    	
     	Calendar cal = new GregorianCalendar();
     	cal.set(2009, Calendar.APRIL, 21, 15, 16, 17);
     	Date date1 = cal.getTime();
     	DailySales ds1 = new DailySales();
     	ds1.setDate(date1);
     	ds1.setSum(BigDecimal.valueOf(1140));
+    	ds1.setStore(st);
     	dailySalesDAO.save(ds1);
     	
     	cal.set(2009, Calendar.APRIL, 22, 15, 16, 17);
     	Date date2 = cal.getTime();
     	DailySales ds2 = new DailySales();
     	ds1.setDate(date2);
+    	ds2.setStore(st);
     	ds1.setSum(BigDecimal.valueOf(1140));
     	dailySalesDAO.save(ds2);
     	
+    	Filter filter = new Filter("storeKey == targetStoreKey", "com.google.appengine.api.datastore.Key targetStoreKey", st.getKey());
     	Assert.assertTrue(dailySalesDAO.findAll().size() == 2);
+    	for (DailySales ds : dailySalesDAO.findFiltered(filter)) {
+    		Assert.assertNotNull(ds.getKey());
+    	}
     }
 
     @Test
@@ -151,5 +160,10 @@ public class DailySalesDAOTest extends AbstractTestNGSpringContextTests {
     	
     	DailySales dsResult = dailySalesDAO.getEntityByKey(ds1.getKey());
     	Assert.assertEquals(storeDao.getEntityByKey(dsResult.getStore().getKey()), st);
+    }
+    
+    @Test
+    public void testIterable() {
+    	
     }
 }

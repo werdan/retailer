@@ -19,15 +19,14 @@ import org.testng.annotations.Test;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
-import fr.smile.retailer.dao.interfaces.IStoreDAO;
-import fr.smile.retailer.model.Store;
-import fr.smile.retailer.web.propertyeditors.StoreEditor;
+import fr.smile.retailer.dao.interfaces.IProductDAO;
+import fr.smile.retailer.model.Product;
 
 @ContextConfiguration(locations = { "classpath:spring/testApplicationContext.xml"})
-public class StoreControllerTest extends AbstractTestNGSpringContextTests {
+public class ProductControllerTest extends AbstractTestNGSpringContextTests {
 
 	@Autowired
-	private StoreController controller;
+	private ProductController controller;
 
 	private HandlerAdapter handlerAdapter;
 	private MockHttpServletRequest request;
@@ -36,7 +35,7 @@ public class StoreControllerTest extends AbstractTestNGSpringContextTests {
 	private LocalServiceTestHelper helper = null;
 
 	@Autowired
-	private IStoreDAO storeDao;
+	private IProductDAO productDao;
 
     @AfterMethod
     public void tearDown() {
@@ -52,9 +51,10 @@ public class StoreControllerTest extends AbstractTestNGSpringContextTests {
 		response = new MockHttpServletResponse();
 	}
 	
+	@SuppressWarnings("static-access")
 	@Test
 	public void testGetNew() {
-		request.setRequestURI("/forms/store");
+		request.setRequestURI("/forms/product");
 		request.setMethod("GET");
 		ModelAndView mav = null;
 		try {
@@ -63,24 +63,24 @@ public class StoreControllerTest extends AbstractTestNGSpringContextTests {
 			Assert.fail("Expecting no exception, got: ",e);
 		}
 		ModelAndViewAssert.assertViewName(mav, controller.VIEW_NAME);
-		ModelAndViewAssert.assertAndReturnModelAttributeOfType(mav, controller.MODEL_NAME, Store.class);
+		ModelAndViewAssert.assertAndReturnModelAttributeOfType(mav, controller.MODEL_NAME, Product.class);
 	}
 	
 	@Test
 	public void testSubmit() {
-			request.setRequestURI("/forms/store");
+			request.setRequestURI("/forms/product");
 			request.setMethod("POST");
 			request.addParameter("name", "testname");
-			Assert.assertTrue(storeDao.findAll().size() == 0);
+			Assert.assertTrue(productDao.findAll().size() == 0);
 			try {
 				handlerAdapter.handle(request, response, controller);
 			} catch (Exception e) {
 				Assert.fail("Expecting no exception, got: ",e);
 			}
-			Assert.assertTrue(storeDao.findAll().size() == 1);
-			List<Store> list = storeDao.findAll();
-			Store store = list.get(0);
+			Assert.assertTrue(productDao.findAll().size() == 1);
+			List<Product> list = productDao.findAll();
+			Product product = list.get(0);
 			
-			Assert.assertEquals(store.getName(),"testname");
+			Assert.assertEquals(product.getName(),"testname");
 	}	
 }

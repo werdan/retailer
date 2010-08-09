@@ -16,12 +16,21 @@
 	<definition name="dailysales" extends="page.common">
 		<put-attribute name="content" value="/WEB-INF/jsp/dailysales.jsp" />
 	</definition>
+	
 	<definition name="store" extends="page.common">
 		<put-attribute name="content" value="/WEB-INF/jsp/store.jsp" />
+	</definition>
+
+	<definition name="product" extends="page.common">
+		<put-attribute name="content" value="/WEB-INF/jsp/product.jsp" />
 	</definition>
 	
 	<definition name="stocktake" extends="page.common">
 		<put-attribute name="content" value="/WEB-INF/jsp/stocktake.jsp" />
+	</definition>
+
+	<definition name="delivery" extends="page.common">
+		<put-attribute name="content" value="/WEB-INF/jsp/delivery.jsp" />
 	</definition>
 
 	<!-- Reports -->

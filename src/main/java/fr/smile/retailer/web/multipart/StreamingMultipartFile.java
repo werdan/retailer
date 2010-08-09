@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartException;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.io.IOUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.File;
@@ -68,8 +69,7 @@ public class StreamingMultipartFile implements MultipartFile {
     }
 
     public InputStream getInputStream() throws IOException {
-        throw new UnsupportedOperationException("not possible");
-
+    	return new ByteArrayInputStream(this.getBytes());
     }
 
     public void transferTo(File dest) throws IOException, IllegalStateException {

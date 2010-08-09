@@ -51,6 +51,11 @@ public class Product implements KeyEnabled{
 		return cachedHashCode;
 	}
 
+	public void setKey(Key key) {
+		this.key = key;
+	}
+
+	
 	@Override
 	public Key getKey() {
 		return key;

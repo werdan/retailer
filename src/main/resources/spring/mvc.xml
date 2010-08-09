@@ -18,8 +18,9 @@
 	</bean>
 
 	<!-- Controllers -->
+	<bean class="fr.smile.retailer.web.controller.ProductController" />
 	<bean class="fr.smile.retailer.web.controller.DailySalesController" />
-	<bean class="fr.smile.retailer.web.controller.StoresController" />
+	<bean class="fr.smile.retailer.web.controller.StoreController" />
 	<bean class="fr.smile.retailer.web.controller.ReportsController" />
 	<bean class="fr.smile.retailer.web.controller.StocktakeController" />
 	<bean class="fr.smile.retailer.web.controller.DeliveryController" />

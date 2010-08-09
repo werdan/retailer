@@ -66,6 +66,11 @@ public class DeliveryController {
 	 * @return
 	 */
 
+	@ModelAttribute(StoreController.MODEL_NAME + "s")
+	public List<Store> getStores() {
+		return storeDao.findAll();
+	}
+	
 	@ModelAttribute(MODEL_NAME)
 	public Delivery getNewDelivery() {
 		return new Delivery();

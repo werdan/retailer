@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
+import org.datanucleus.sco.backed.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -63,9 +65,12 @@ public class ReportsControllerTest extends AbstractTestNGSpringContextTests {
 	
 	@Test
 	public void testGetDailySalesReport() {
-	    	Store st = new Store("test");
+	    	Store st = new Store("test1");
 	    	storeDao.save(st);
 
+	    	Store st2 = new Store("test2");
+	    	storeDao.save(st2);
+	    	
 	    	Calendar cal = new GregorianCalendar();
 	    	cal.set(2009, Calendar.APRIL, 21, 15, 16, 17);
 	    	Date date1 = cal.getTime();
@@ -81,6 +86,12 @@ public class ReportsControllerTest extends AbstractTestNGSpringContextTests {
 	    	ds2.setSum(BigDecimal.valueOf(200));
 	    	ds2.setStore(st);
 	    	dailySalesDAO.save(ds2);
+
+	    	DailySales ds3 = new DailySales();
+	    	ds3.setDate(date1);
+	    	ds3.setSum(BigDecimal.valueOf(200));
+	    	ds3.setStore(st2);
+	    	dailySalesDAO.save(ds3);
 	    	
 			request.setRequestURI("/reports/dailysales");
 			request.setMethod("GET");
@@ -92,8 +103,10 @@ public class ReportsControllerTest extends AbstractTestNGSpringContextTests {
 				Assert.fail("Expecting no exception, got: ",e);
 			}
 
-			List<DailySales> expDailySales = dailySalesDAO.findAll();
-	    	
-	    	ModelAndViewAssert.assertCompareListModelAttribute(mav, DailySalesController.MODEL_NAME, expDailySales);
+			@SuppressWarnings("unchecked")
+			HashMap<Store,List<DailySales>> listDS = (HashMap<Store,List<DailySales>>) ModelAndViewAssert.assertAndReturnModelAttributeOfType(mav, "dailySalesByStore", HashMap.class);
+			Assert.assertTrue(listDS.size() == 2);
+			
+			
 	}	
 }

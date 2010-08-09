@@ -9,6 +9,7 @@ import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.appengine.api.datastore.Key;
@@ -18,15 +19,15 @@ import fr.smile.retailer.dao.interfaces.PersistenceManagerLocator;
 import fr.smile.retailer.model.KeyEnabled;
 
 
-@SuppressWarnings("rawtypes")
 public abstract class AbstractAppEngineDAO<T extends KeyEnabled> implements GenericDAO<T> {
 
-	protected Class modelClass;
+	protected Class<KeyEnabled> modelClass;
 
-    protected AbstractAppEngineDAO() {
+    @SuppressWarnings("unchecked")
+	protected AbstractAppEngineDAO() {
         if (getClass().getGenericSuperclass() instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-            this.modelClass = (Class) parameterizedType.getActualTypeArguments()[0];
+            this.modelClass = (Class<KeyEnabled>) parameterizedType.getActualTypeArguments()[0];
         } else {
             throw new RuntimeException(this.getClass().getName() + " are not parametrized by generic type.");
         }
@@ -94,7 +95,7 @@ public abstract class AbstractAppEngineDAO<T extends KeyEnabled> implements Gene
 		
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<T> findAll() {
 	    PersistenceManager pm = pmlocator.getPersistenceManager();
@@ -118,14 +119,77 @@ public abstract class AbstractAppEngineDAO<T extends KeyEnabled> implements Gene
 
 	@Override
 	public List<T> findFiltered(Filter filter) {
-		// TODO Auto-generated method stub
-		return null;
+		return findFilteredExt(filter, null, null);
 	}
-
+	
+	/**
+	 * 
+	 * Find instances according to filter provided and optional sort order.<br/>
+     * <br/>
+	 * Example of two-parameters filter:<br/>
+	 * <br/>
+	 * <code>
+	 * Filter filter = new Filter("date < nowDate && storeKey == targetStoreKey", 
+	 *			"java.util.Date nowDate, com.google.appengine.api.datastore.Key targetStoreKey", cal.getTime());
+	 *  		filter.setParamValue2(take.getStoreKey());
+     * </code>
+	 * </p>
+	 */
 	@Override
 	public List<T> findFiltered(Filter filter, String orderBy) {
-		// TODO Auto-generated method stub
-		return null;
+		return findFilteredExt(filter, orderBy, null);
+	}
+		
+	@SuppressWarnings("unchecked")
+	List<T> findFilteredExt(Filter filter, String orderBy, String range) {
+	    PersistenceManager pm = getPersistenceManagerLocator().getPersistenceManager();
+		Query query = pm.newQuery("SELECT FROM " + modelClass.getName());
+		query.setFilter(filter.getFilterExpession());
+		query.declareParameters(filter.getParamExpression());
+		if (!StringUtils.isBlank(range)) {
+			query.setRange(range);
+			//FIXME This is only for range="0,1" => Calculate unique from range expression
+			query.setUnique(true);
+		}
+		if (orderBy != null) {
+			query.setOrdering(orderBy);
+		}
+		try {
+			Object result = null;
+			switch (filter.getParamNumber()) {
+				case 1: { 
+					result = query.execute(filter.getParamValue());
+					break;
+				}
+				case 2: { 
+					result = query.execute(filter.getParamValue(),filter.getParamValue2());
+					break;
+				}
+				case 3: { 
+					result = query.execute(filter.getParamValue(),filter.getParamValue2(), filter.getParamValue3());
+					break;
+				}
+				default: 
+					throw new IllegalArgumentException("Filter accepts only 1 up to 3 parameters, currently got " + filter.getParamNumber());
+			}
+			List<T> list = new ArrayList<T>();
+			if (!StringUtils.isBlank(range) && result instanceof KeyEnabled) {
+				list.add((T) result);
+			} else if (result instanceof List){
+				list = (List<T>) result;
+				/*
+				 * Querying list size to lazy load entities
+				 * http://code.google.com/p/datanucleus-appengine/issues/detail?id=46
+				 */
+				list.size();
+			} else {
+				throw new IllegalArgumentException("Unexpected result of Query, accepting only classes that implement KeyEnabled or List interfaces");
+			}
+			return list;
+        } finally {
+        	query.closeAll();
+        	pm.close();
+        }
 	}
 
 	@Override
@@ -139,43 +203,14 @@ public abstract class AbstractAppEngineDAO<T extends KeyEnabled> implements Gene
 		return findUniqueFiltered(filter, null);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public T findUniqueFiltered(Filter filter, String orderBy) {
-	    PersistenceManager pm = getPersistenceManagerLocator().getPersistenceManager();
-		Query query = pm.newQuery("SELECT FROM " + modelClass.getName());
-		query.setFilter(filter.getFilterExpession());
-		query.declareParameters(filter.getParamExpression());
-		if (orderBy != null) {
-			query.setOrdering(orderBy);
-		}
-		try {
-			List<T> list = null;
-			switch (filter.getParamNumber()) {
-				case 1: { 
-					list = (List<T>) query.execute(filter.getParamValue());
-					break;
-				}
-				case 2: { 
-					list = (List<T>) query.execute(filter.getParamValue(),filter.getParamValue2());
-					break;
-				}
-				case 3: { 
-					list = (List<T>) query.execute(filter.getParamValue(),filter.getParamValue2(), filter.getParamValue3());
-					break;
-				}
-				default: 
-			}
-			if (list != null && list.size() != 0) {
+			List<T> list = findFilteredExt(filter, orderBy, "0,1");
+			if (list != null && list.get(0) != null) {
 				return initUnownedRelations(list.get(0));
 			} else {
 				return null;
 			}
-        } finally {
-        	query.closeAll();
-        	pm.close();
-        }
-
 	}
 
 	@Override
