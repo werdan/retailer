@@ -182,6 +182,8 @@ public abstract class AbstractAppEngineDAO<T extends KeyEnabled> implements Gene
 				 * http://code.google.com/p/datanucleus-appengine/issues/detail?id=46
 				 */
 				list.size();
+			} else if (result == null) {
+				return null;
 			} else {
 				throw new IllegalArgumentException("Unexpected result of Query, accepting only classes that implement KeyEnabled or List interfaces");
 			}

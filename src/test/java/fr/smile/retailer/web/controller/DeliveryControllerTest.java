@@ -28,10 +28,14 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import fr.smile.retailer.dao.interfaces.IDeliveryDAO;
 import fr.smile.retailer.dao.interfaces.IProductDAO;
 import fr.smile.retailer.dao.interfaces.IStoreDAO;
+import fr.smile.retailer.dao.interfaces.ISupplierDAO;
 import fr.smile.retailer.model.Delivery;
+import fr.smile.retailer.model.DeliveryItem;
 import fr.smile.retailer.model.Product;
 import fr.smile.retailer.model.Store;
+import fr.smile.retailer.model.Supplier;
 import fr.smile.retailer.web.propertyeditors.StoreEditor;
+import fr.smile.retailer.web.propertyeditors.SupplierEditor;
 
 @ContextConfiguration(locations = { "classpath:spring/testApplicationContext.xml"})
 public class DeliveryControllerTest extends AbstractTestNGSpringContextTests {
@@ -52,7 +56,13 @@ public class DeliveryControllerTest extends AbstractTestNGSpringContextTests {
 	private IProductDAO productDao;
 
 	@Autowired
+	private ISupplierDAO supplierDao;
+
+	@Autowired
 	private StoreEditor storePropertyEditor;
+
+	@Autowired
+	private SupplierEditor supplierPropertyEditor;
 
 	@Autowired
 	private IDeliveryDAO deliveryDao; 
@@ -87,6 +97,12 @@ public class DeliveryControllerTest extends AbstractTestNGSpringContextTests {
 			storePropertyEditor.setValue(store);
 			request.addParameter("store", storePropertyEditor.getAsText());
 			
+			//Supplier
+			Supplier sp = new Supplier("testSup");
+			supplierDao.save(sp);
+			supplierPropertyEditor.setValue(sp);
+			request.addParameter("supplier", supplierPropertyEditor.getAsText());
+
 			//Delivery file
 			Resource res = loader.getResource("classpath:/testfiles/Delivery.xls");
 			MockMultipartFile mockFile = new MockMultipartFile("deliveryxls", res.getInputStream());
@@ -115,7 +131,12 @@ public class DeliveryControllerTest extends AbstractTestNGSpringContextTests {
 	    	pr4.setCode("67");
 	    	productDao.save(pr4);
 
-			
+	    	Product pr5 = new Product();
+	    	pr5.setName("test5");
+	    	pr5.setCode("63");
+	    	productDao.save(pr5);
+	    	
+	    	
 			ModelAndView mav = null;
 			try {
 				mav = handlerAdapter.handle(request, response, controller);
@@ -133,6 +154,13 @@ public class DeliveryControllerTest extends AbstractTestNGSpringContextTests {
 			Assert.assertTrue(DateUtils.isSameDay(delivery.getDate(), cal.getTime()));
 			
 			Assert.assertTrue(delivery.getItems().size() == 4, "Expecting 4, got " + delivery.getItems().size());
+			
+			for (DeliveryItem di: delivery.getItems()) {
+				Assert.assertNotNull(di.getCost());
+			}
+			
+			Assert.assertNotNull(delivery.getSupplierKey());
+			Assert.assertNotNull(delivery.getXLSBlob());
 			
 			ModelAndViewAssert.assertViewName(mav, "redirect:/home/index");
 	}	

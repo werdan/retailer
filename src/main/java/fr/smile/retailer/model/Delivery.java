@@ -10,6 +10,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
 
 /**
@@ -29,12 +30,22 @@ public class Delivery implements KeyEnabled {
 	@Persistent
 	private Key storeKey;
 	
+	@Persistent
+	private Key supplierKey;
+	
 	@Persistent(mappedBy = "delivery", defaultFetchGroup = "true")
 	@Element(dependent = "true")
 	private List<DeliveryItem> items;
 	
+	@Persistent
+	private Blob xls;
+	
 	@NotPersistent
 	private Store store;
+
+	@NotPersistent
+	private Supplier supplier;
+
 	
 	public Date getDate() {
 		return date;
@@ -75,5 +86,33 @@ public class Delivery implements KeyEnabled {
 	public Key getKey() {
 		return key;
 	}
+	
+	public void setSupplierKey(Key supplierKey) {
+		this.supplierKey = supplierKey;
+	}
+
+	public Key getSupplierKey() {
+		return supplierKey;
+	}
+
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
+		if (supplier != null) {
+			this.supplierKey = supplier.getKey();
+		}
+	}
+
+	public Supplier getSupplier() {
+		return supplier;
+	}
+
+	public void setXLSBlob(Blob xls) {
+		this.xls = xls;
+	}
+
+	public Blob getXLSBlob() {
+		return xls;
+	}
+
 	
 }

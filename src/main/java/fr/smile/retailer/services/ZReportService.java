@@ -21,13 +21,15 @@ public class ZReportService implements IZReportService {
 	public ZReportItem createItem(List<String> values) throws IllegalArgumentException{
 		ZReportItem zreportItem = new ZReportItem();
 		
-		
 		String code = values.get(0);
 		
 		String quantityToParse = values.get(2).isEmpty() ? "0" : values.get(2);
 		BigDecimal quantity = new BigDecimal(quantityToParse);
 		quantity = quantity.setScale(3, BigDecimal.ROUND_HALF_EVEN);
-		
+		if (quantity.compareTo(BigDecimal.valueOf(0)) == 0) {
+			throw new IllegalArgumentException("Product with code = " + CustomNumberUtils.createIntegerViaDouble(code).toString() + " is not imported as quantity = 0");
+		}
+
 		Product product = productDao.getByCode(CustomNumberUtils.createIntegerViaDouble(code).toString());
 		if (product == null) {
 			throw new IllegalArgumentException("Product with code = " + CustomNumberUtils.createIntegerViaDouble(code).toString() + " not found");

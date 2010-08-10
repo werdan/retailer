@@ -5,9 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.List;
 
-import org.datanucleus.sco.backed.Map;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -75,6 +74,9 @@ public class ReportsControllerTest extends AbstractTestNGSpringContextTests {
 	    	cal.set(2009, Calendar.APRIL, 21, 15, 16, 17);
 	    	Date date1 = cal.getTime();
 
+	    	cal.set(2009, Calendar.APRIL, 22, 15, 16, 17);
+	    	Date date2 = cal.getTime();
+
 	    	DailySales ds1 = new DailySales();
 	    	ds1.setDate(date1);
 	    	ds1.setSum(BigDecimal.valueOf(100));
@@ -82,7 +84,7 @@ public class ReportsControllerTest extends AbstractTestNGSpringContextTests {
 	    	dailySalesDAO.save(ds1);
 
 	    	DailySales ds2 = new DailySales();
-	    	ds2.setDate(date1);
+	    	ds2.setDate(date2);
 	    	ds2.setSum(BigDecimal.valueOf(200));
 	    	ds2.setStore(st);
 	    	dailySalesDAO.save(ds2);
@@ -95,7 +97,7 @@ public class ReportsControllerTest extends AbstractTestNGSpringContextTests {
 	    	
 			request.setRequestURI("/reports/dailysales");
 			request.setMethod("GET");
-
+ 
 			ModelAndView mav = null;
 			try {
 				mav = handlerAdapter.handle(request, response, controller);
@@ -104,9 +106,10 @@ public class ReportsControllerTest extends AbstractTestNGSpringContextTests {
 			}
 
 			@SuppressWarnings("unchecked")
-			HashMap<Store,List<DailySales>> listDS = (HashMap<Store,List<DailySales>>) ModelAndViewAssert.assertAndReturnModelAttributeOfType(mav, "dailySalesByStore", HashMap.class);
+			HashMap<Date,HashMap<Store,BigDecimal>> listDS = (HashMap<Date,HashMap<Store,BigDecimal>>) ModelAndViewAssert.assertAndReturnModelAttributeOfType(mav, "dailySalesByStore", HashMap.class);
 			Assert.assertTrue(listDS.size() == 2);
-			
-			
+			Assert.assertTrue(listDS.get(DateUtils.round(date1, Calendar.DAY_OF_MONTH)).size() == 2);
+			Assert.assertTrue(listDS.get(DateUtils.round(date1, Calendar.DAY_OF_MONTH)).get(st).compareTo(BigDecimal.valueOf(100)) == 0);
+			Assert.assertTrue(listDS.get(DateUtils.round(date2, Calendar.DAY_OF_MONTH)).size() == 1);
 	}	
 }

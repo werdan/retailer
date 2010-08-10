@@ -26,9 +26,6 @@ public class DeliveryItem implements XLSLineModel {
 	private Delivery delivery;
 		
 	@Persistent
-	private Key supplierKey;
-
-	@Persistent
 	private Key productKey;
 
 	@NotPersistent
@@ -57,9 +54,6 @@ public class DeliveryItem implements XLSLineModel {
 	 */
 	@Persistent
 	private boolean trashed;
-
-	@NotPersistent
-	private Supplier supplier;
 
 	public void setProduct(Product product) {
 		this.product = product;
@@ -112,20 +106,5 @@ public class DeliveryItem implements XLSLineModel {
 		return quantity;
 	}
 
-	public void setSupplierKey(Key supplierKey) {
-		this.supplierKey = supplierKey;
-	}
-
-	public Key getSupplierKey() {
-		return supplierKey;
-	}
-
-	public void setSupplier(Supplier supplier) {
-		this.supplier = supplier;
-	}
-
-	public Supplier getSupplier() {
-		return supplier;
-	}
 
 }

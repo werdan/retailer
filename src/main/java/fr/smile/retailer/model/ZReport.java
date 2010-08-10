@@ -10,6 +10,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
 
 /**
@@ -37,6 +38,9 @@ public class ZReport implements KeyEnabled {
 	@Persistent(mappedBy = "zreport", defaultFetchGroup = "true")
 	@Element(dependent = "true")
 	private List<ZReportItem> items;
+	
+	@Persistent
+	private Blob xls;
 	
 	@NotPersistent
 	private Store store;
@@ -79,6 +83,14 @@ public class ZReport implements KeyEnabled {
 	@Override
 	public Key getKey() {
 		return key;
+	}
+
+	public void setXLSBlob(Blob xls) {
+		this.xls = xls;
+	}
+
+	public Blob getXLSBlob() {
+		return xls;
 	}
 	
 }

@@ -10,6 +10,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
 
 /**
@@ -40,6 +41,9 @@ public class Stocktake implements KeyEnabled {
 	@Persistent(mappedBy = "stocktake", defaultFetchGroup = "true")
 	@Element(dependent = "true")
 	private List<StocktakeItem> items;
+	
+	@Persistent
+	private Blob xls;
 	
 	@NotPersistent
 	private Store store;
@@ -104,6 +108,14 @@ public class Stocktake implements KeyEnabled {
 
 	public ZReport getZreport() {
 		return zreport;
+	}
+
+	public void setXLSBlob(Blob xls) {
+		this.xls = xls;
+	}
+
+	public Blob getXLSBlob() {
+		return xls;
 	}
 	
 }

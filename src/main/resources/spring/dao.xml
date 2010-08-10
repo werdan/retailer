@@ -16,5 +16,6 @@
 	<bean id="deliveryDAO" class="fr.smile.retailer.dao.DeliveryDAO"/>
 	<bean id="productDAO" class="fr.smile.retailer.dao.ProductDAO"/>
 	<bean id="zreportDAO" class="fr.smile.retailer.dao.ZReportDAO"/>
+	<bean id="supplierDAO" class="fr.smile.retailer.dao.SupplierDAO"/>
 
 </beans>

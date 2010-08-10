@@ -30,9 +30,11 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 import fr.smile.retailer.dao.AbstractAppEngineDAO;
 import fr.smile.retailer.dao.StocktakeDAO;
+import fr.smile.retailer.dao.interfaces.IProductDAO;
 import fr.smile.retailer.dao.interfaces.IStocktakeDAO;
 import fr.smile.retailer.dao.interfaces.IStoreDAO;
 import fr.smile.retailer.dao.interfaces.IZReportDAO;
+import fr.smile.retailer.model.Product;
 import fr.smile.retailer.model.Stocktake;
 import fr.smile.retailer.model.StocktakeItem;
 import fr.smile.retailer.model.Store;
@@ -56,6 +58,9 @@ public class StocktakeControllerTest extends AbstractTestNGSpringContextTests {
 	@Autowired
 	private IStoreDAO storeDao;
 
+	@Autowired
+	private IProductDAO productDao;
+	
 	@Autowired
 	private StoreEditor storePropertyEditor;
 
@@ -82,13 +87,29 @@ public class StocktakeControllerTest extends AbstractTestNGSpringContextTests {
 		response = new MockHttpServletResponse();
 	}
 		
-	@Test(enabled=false)
+	@Test
 	public void testSubmit() throws IOException {
 			request.setRequestURI("/forms/stocktake");
 			request.setMethod("POST");
 			//Date
 			request.addParameter("date", "18-07-2010");
 
+			//Products
+	    	Product pr1 = new Product();
+	    	pr1.setName("test1");
+	    	pr1.setCode("1");
+	    	productDao.save(pr1);
+
+	    	Product pr2 = new Product();
+	    	pr2.setName("test2");
+	    	pr2.setCode("3");
+	    	productDao.save(pr2);
+	    	
+	    	Product pr3 = new Product();
+	    	pr3.setName("test3");
+	    	pr3.setCode("4");
+	    	productDao.save(pr3);
+			
 			//Store
 			Store store = new Store("test");
 			storeDao.save(store);
@@ -124,13 +145,15 @@ public class StocktakeControllerTest extends AbstractTestNGSpringContextTests {
 			Calendar cal = new GregorianCalendar(2010, Calendar.JULY, 18);
 			Assert.assertTrue(DateUtils.isSameDay(take.getDate(), cal.getTime()));
 			
-			Assert.assertTrue(take.getItems().size() == 2);
+			Assert.assertTrue(take.getItems().size() == 1);
+			Assert.assertNotNull(take.getXLSBlob());
 			
 			Assert.assertNotNull(take.getZreportKey());
 			
 			ZReport zreport = zreportDao.getEntityByKey(take.getZreportKey());
 			Assert.assertNotNull(zreport.getKey());
-			Assert.assertTrue(zreport.getItems().size() == 65);
+			Assert.assertTrue(zreport.getItems().size() == 1);
+			Assert.assertNotNull(zreport.getXLSBlob());
 			
 			//Check that costs are filled-in
 			for (StocktakeItem stocktakeItem: take.getItems()) {

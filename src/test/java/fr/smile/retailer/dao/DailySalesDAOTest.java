@@ -163,7 +163,10 @@ public class DailySalesDAOTest extends AbstractTestNGSpringContextTests {
     }
     
     @Test
-    public void testIterable() {
-    	
+    public void testFindUniqueFilteredNullResult() {
+    	Calendar cal = new GregorianCalendar();
+    	Filter filter = new Filter("date < nowDate", 
+				"java.util.Date nowDate", cal.getTime());
+    	Assert.assertNull(dailySalesDAO.findUniqueFiltered(filter));
     }
 }

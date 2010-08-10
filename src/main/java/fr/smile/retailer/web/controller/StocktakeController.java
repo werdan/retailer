@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.appengine.api.datastore.Blob;
+
 import fr.smile.retailer.dao.interfaces.GenericDAO;
 import fr.smile.retailer.dao.interfaces.IStocktakeDAO;
 import fr.smile.retailer.dao.interfaces.IStoreDAO;
@@ -112,13 +114,15 @@ public class StocktakeController {
 			take.setDate(dateShort);
 			take.setStore(store);
 			take.setItems(stocktakeItemsList);
-
+			take.setXLSBlob(new Blob(stockFile.getBytes()));
+			
 			logger.debug("Parsing ZReport Excel document");
 
 			parser = new SimpleXLSParser();
 			List<ZReportItem> zReportItemsList = (List<ZReportItem>) parser.parse(zreportFile.getInputStream(), zreportService);
 			ZReport zreport = new ZReport();
 			zreport.setItems(zReportItemsList);
+			zreport.setXLSBlob(new Blob(zreportFile.getBytes()));
 			zreportDao.save(zreport);
 			
 			take.setZreport(zreport);

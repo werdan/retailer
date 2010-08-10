@@ -1,5 +1,7 @@
 package fr.smile.retailer.web.controller;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +49,17 @@ public class ReportsController {
 	public ModelAndView getDailySalesReport() {
 		ModelAndView mav = new ModelAndView(REPORTS_PREFIX + DailySalesController.VIEW_NAME);
 		mav.addObject(StoreController.MODEL_NAME + "s", storeDao.findAll());
-		Map<Store,List<DailySales>> listDS = new HashMap<Store,List<DailySales>>();
-		for (Store store: storeDao.findAll()) {
-			Filter filter = new Filter("storeKey == targetStoreKey", "com.google.appengine.api.datastore.Key targetStoreKey", store.getKey());
-			listDS.put(store, dailySalesDAO.findFiltered(filter));
+		
+		Map<Date,Map<Store,BigDecimal>> listDS = new HashMap<Date,Map<Store,BigDecimal>>();
+		for (DailySales ds: dailySalesDAO.findAll()) {
+			Map<Store,BigDecimal> storeSalesMap;
+			if (listDS.containsKey(ds.getDate())) {
+				storeSalesMap = listDS.get(ds.getDate());
+			} else {
+				storeSalesMap = new HashMap<Store,BigDecimal>();
+			}
+			storeSalesMap.put(ds.getStore(), ds.getSum());
+			listDS.put(ds.getDate(), storeSalesMap);
 		}
 		mav.addObject("dailySalesByStore", listDS);
 		return mav;

@@ -24,9 +24,11 @@
 	<bean class="fr.smile.retailer.web.controller.ReportsController" />
 	<bean class="fr.smile.retailer.web.controller.StocktakeController" />
 	<bean class="fr.smile.retailer.web.controller.DeliveryController" />
+	<bean class="fr.smile.retailer.web.controller.SupplierController" />
 	
 	<!-- Property Editors -->
 	<bean class="fr.smile.retailer.web.propertyeditors.StoreEditor"/>
+	<bean class="fr.smile.retailer.web.propertyeditors.SupplierEditor"/>
 
 	<!-- File uploader -->
 	<bean id="multipartResolver" class="fr.smile.retailer.web.multipart.StreamingMultipartResolver">

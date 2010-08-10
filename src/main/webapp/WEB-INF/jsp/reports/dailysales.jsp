@@ -12,7 +12,9 @@
 
   data.addColumn('date', 'Дата');
   <c:forEach var="storeDailySalesEntry" items="${dailySalesByStore}" varStatus="counterStore">
-  	data.addColumn('number', 'Продажи ${storeDailySalesEntry.key.name}, грн');
+
+ 	data.addColumn('number', 'Продажи ${storeDailySalesEntry.key.name}, грн');
+  <c:forEach var="storeDailySalesEntry" items="${dailySalesByStore}" varStatus="counterStore">
   	data.addRows(${fn:length(storeDailySalesEntry.value)});
 
   	<c:forEach var="dailysale" items="${storeDailySalesEntry.value}" varStatus="counterItem">

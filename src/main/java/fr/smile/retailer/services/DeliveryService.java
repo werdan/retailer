@@ -61,7 +61,10 @@ public class DeliveryService implements IDeliveryService {
 
 		BigDecimal quantity = CustomNumberUtils.createBigDecimal(values.get(1));
 		quantity = quantity.setScale(3, BigDecimal.ROUND_HALF_EVEN);
-
+		if (quantity.compareTo(BigDecimal.valueOf(0)) == 0) {
+			throw new IllegalArgumentException("Product with code = " + CustomNumberUtils.createIntegerViaDouble(code).toString() + " is not imported as quantity = 0");
+		}
+		
 		Product product = productDao.getByCode(CustomNumberUtils.createIntegerViaDouble(code).toString());
 		if (product == null) {
 			throw new IllegalArgumentException("Product with code = " + CustomNumberUtils.createIntegerViaDouble(code).toString() + " not found");

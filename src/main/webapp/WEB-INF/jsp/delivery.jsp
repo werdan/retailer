@@ -12,6 +12,12 @@
 			<form:option value="0" label="Select" />
 			<form:options items="${stores}" itemValue="key" itemLabel="name" />
 		</form:select>	
+
+		<form:select path="supplier">
+			<form:option value="0" label="Select" />
+			<form:options items="${suppliers}" itemValue="key" itemLabel="name" />
+		</form:select>	
+
 		<input type="file" name="deliveryxls"/>
 		<input type="submit"/>
 		</fieldset>
