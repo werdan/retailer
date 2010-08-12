@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -48,7 +49,6 @@ public class ReportsController {
 	@RequestMapping(value = "/reports/dailysales", method = RequestMethod.GET)
 	public ModelAndView getDailySalesReport() {
 		ModelAndView mav = new ModelAndView(REPORTS_PREFIX + DailySalesController.VIEW_NAME);
-		mav.addObject(StoreController.MODEL_NAME + "s", storeDao.findAll());
 		
 		Map<Date,Map<Store,BigDecimal>> listDS = new HashMap<Date,Map<Store,BigDecimal>>();
 		for (DailySales ds: dailySalesDAO.findAll()) {
@@ -61,7 +61,10 @@ public class ReportsController {
 			storeSalesMap.put(ds.getStore(), ds.getSum());
 			listDS.put(ds.getDate(), storeSalesMap);
 		}
+
+		mav.addObject("dailySalesCount", listDS.size());
 		mav.addObject("dailySalesByStore", listDS);
+		mav.addObject(StoreController.MODEL_NAME + "s", storeDao.findAll());
 		return mav;
 	}
 }

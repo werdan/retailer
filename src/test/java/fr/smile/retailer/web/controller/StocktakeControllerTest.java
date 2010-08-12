@@ -87,7 +87,7 @@ public class StocktakeControllerTest extends AbstractTestNGSpringContextTests {
 		response = new MockHttpServletResponse();
 	}
 		
-	@Test
+	@Test(enabled = false)
 	public void testSubmit() throws IOException {
 			request.setRequestURI("/forms/stocktake");
 			request.setMethod("POST");

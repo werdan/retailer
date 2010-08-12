@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.smile</groupId>
 	<artifactId>retailer</artifactId>
-	<version>2.0-SNAPSHOT</version>
+	<version>0.2-SNAPSHOT</version>
 	<name>Retailer</name>
 	<packaging>war</packaging>
 
@@ -265,6 +265,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.1-beta-1</version>
 				<configuration>
+					<!--  webXml${basedir}/target/jspweb.xml/webXml-->
 					<filters>
 						<filter>${project.build.directory}/version.properties</filter>
 					</filters>
@@ -368,7 +369,6 @@
 					</webAppConfig>
 				</configuration>
 			</plugin>
-
 		</plugins>
 	</build>
 	<repositories>
@@ -385,4 +385,38 @@
 			<url>http://maven-gae-plugin.googlecode.com/svn/repository</url>
 		</pluginRepository>
 	</pluginRepositories>
+	<profiles>
+		<profile>
+		<build>
+			<plugins>
+				<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jspc-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>jspc</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<!-- JSP/JSTL -->
+					<dependency>
+						<groupId>jstl</groupId>
+						<artifactId>jstl</artifactId>
+						<version>1.1.2</version>
+					</dependency>
+					<dependency>
+						<groupId>taglibs</groupId>
+						<artifactId>standard</artifactId>
+						<version>1.1.2</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

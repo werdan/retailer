@@ -11,18 +11,19 @@
   var data = new google.visualization.DataTable();
 
   data.addColumn('date', 'Дата');
-  <c:forEach var="storeDailySalesEntry" items="${dailySalesByStore}" varStatus="counterStore">
-
- 	data.addColumn('number', 'Продажи ${storeDailySalesEntry.key.name}, грн');
-  <c:forEach var="storeDailySalesEntry" items="${dailySalesByStore}" varStatus="counterStore">
-  	data.addRows(${fn:length(storeDailySalesEntry.value)});
-
-  	<c:forEach var="dailysale" items="${storeDailySalesEntry.value}" varStatus="counterItem">
-		data.setValue(${counterItem.count-1},0,new Date("${dailysale.date}"));
-		data.setValue(${counterItem.count-1},${counterStore.count},${dailysale.sum});
- 	 </c:forEach>
+  data.addRows(${dailySalesCount});
+  <c:forEach var="store" items="${stores}" varStatus="counterStoreColumn">
+ 	data.addColumn('number', 'Продажи ${store.name}, грн');
+ 	<c:forEach var="dailySalesEntry" items="${dailySalesByStore}" varStatus="counterDate">
+ 		<c:forEach var="storeDailySalesEntry" items="${dailySalesEntry.value}" varStatus="counterStoreSales">
+ 			<c:if test='${store.name == storeDailySalesEntry.key.name}'>
+ 				data.setValue(${counterDate.count-1},0,new Date("${dailySalesEntry.key}"));
+				data.setValue(${counterDate.count-1},${counterStoreColumn.count},${storeDailySalesEntry.value});
+ 			</c:if>
+		</c:forEach>
+  	</c:forEach>
   </c:forEach>
-
+  
   var annotatedtimeline = new google.visualization.AnnotatedTimeLine(
       document.getElementById('visualization'));
   annotatedtimeline.draw(data, {'displayAnnotations': true});

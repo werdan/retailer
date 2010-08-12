@@ -1,11 +1,13 @@
 package fr.smile.retailer.web.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -63,7 +65,7 @@ public class ReportsControllerTest extends AbstractTestNGSpringContextTests {
 	}
 	
 	@Test
-	public void testGetDailySalesReport() {
+	public void testGetDailySalesReport() throws UnsupportedEncodingException {
 	    	Store st = new Store("test1");
 	    	storeDao.save(st);
 
@@ -111,5 +113,8 @@ public class ReportsControllerTest extends AbstractTestNGSpringContextTests {
 			Assert.assertTrue(listDS.get(DateUtils.round(date1, Calendar.DAY_OF_MONTH)).size() == 2);
 			Assert.assertTrue(listDS.get(DateUtils.round(date1, Calendar.DAY_OF_MONTH)).get(st).compareTo(BigDecimal.valueOf(100)) == 0);
 			Assert.assertTrue(listDS.get(DateUtils.round(date2, Calendar.DAY_OF_MONTH)).size() == 1);
+			
+			Assert.assertNotNull(mav.getView());
+			
 	}	
 }
