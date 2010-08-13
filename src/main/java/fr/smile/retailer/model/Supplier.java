@@ -56,7 +56,7 @@ public class Supplier implements KeyEnabled {
 	
 	public int hashCode() {
 		if (cachedHashCode == 0 ) {
-			cachedHashCode = name.hashCode();
+			cachedHashCode = (getName() != null ? getName().hashCode() : 0);
 		}
 		return cachedHashCode;
 	}

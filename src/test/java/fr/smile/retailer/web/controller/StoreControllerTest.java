@@ -21,7 +21,6 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 import fr.smile.retailer.dao.interfaces.IStoreDAO;
 import fr.smile.retailer.model.Store;
-import fr.smile.retailer.web.propertyeditors.StoreEditor;
 
 @ContextConfiguration(locations = { "classpath:spring/testApplicationContext.xml"})
 public class StoreControllerTest extends AbstractTestNGSpringContextTests {
