@@ -21,11 +21,13 @@
 	<bean class="fr.smile.retailer.web.controller.ProductController" />
 	<bean class="fr.smile.retailer.web.controller.DailySalesController" />
 	<bean class="fr.smile.retailer.web.controller.StoreController" />
-	<bean class="fr.smile.retailer.web.controller.ReportsController" />
 	<bean class="fr.smile.retailer.web.controller.StocktakeController" />
 	<bean class="fr.smile.retailer.web.controller.DeliveryController" />
 	<bean class="fr.smile.retailer.web.controller.SupplierController" />
 	
+	<bean class="fr.smile.retailer.web.controller.reports.DailySalesReportController" />
+	<bean class="fr.smile.retailer.web.controller.reports.SupplierCostsReportController" />
+
 	<!-- Property Editors -->
 	<bean class="fr.smile.retailer.web.propertyeditors.StoreEditor"/>
 	<bean class="fr.smile.retailer.web.propertyeditors.SupplierEditor"/>
