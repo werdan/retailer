@@ -59,7 +59,7 @@ public class SupplierCostsReportControllerTest extends AbstractControllerTest {
 		request.setRequestURI("/reports/suppliercosts");
 		storePropEditor.setValue(store);
 		request.setParameter("store", storePropEditor.getAsText());
-		request.setMethod("GET");
+		request.setMethod("POST");
 
 		ModelAndView mav = null;
 		try {
@@ -69,20 +69,21 @@ public class SupplierCostsReportControllerTest extends AbstractControllerTest {
 		}
 		
 		Table table = (Table) ModelAndViewAssert.assertAndReturnModelAttributeOfType(mav, "productsVersusSuppliers", Table.class);
+		//Results are also stored in src/test/resources/testfiles/SupplierCostResults.xls
 		Table targetTable = new Table(); 
 		Row row = new Row(new String[] {"","testSp2 prices", "testSp2 costs", "testSp prices","testSp costs"});
 		targetTable.addRow(row);
-		row = new Row(new String[] {"1 product","33.000","39.370","39.440", "42.540"});
+		row = new Row(new String[] {"1 product","39.436","42.153","33.000", "38.339"});
 		targetTable.addRow(row);
-		row = new Row(new String[] {"2 product","33.000","39.370","", ""});
+		row = new Row(new String[] {"2 product","", "", "33.000","38.347"});
 		targetTable.addRow(row);
-		row = new Row(new String[] {"7 product","33.000","39.600","", ""});
+		row = new Row(new String[] {"3 product","38.667", "40.314","",""});
 		targetTable.addRow(row);
-		row = new Row(new String[] {"6 product","33.000","39.600","", ""});
+		row = new Row(new String[] {"4 product","25.000", "26.372","",""});
 		targetTable.addRow(row);
-		row = new Row(new String[] {"3 product","","","38.670", "40.550"});
+		row = new Row(new String[] {"6 product","", "","33.000","38.500"});
 		targetTable.addRow(row);
-		row = new Row(new String[] {"4 product","","","25.000", "26.570"});
+		row = new Row(new String[] {"7 product","", "","33.000","38.500"});
 		targetTable.addRow(row);
 		Assert.assertEquals(table, targetTable);
 	}

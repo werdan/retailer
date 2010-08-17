@@ -32,9 +32,19 @@
 	<definition name="delivery" extends="page.common">
 		<put-attribute name="content" value="/WEB-INF/jsp/delivery.jsp" />
 	</definition>
+	<definition name="supplier" extends="page.common">
+		<put-attribute name="content" value="/WEB-INF/jsp/supplier.jsp" />
+	</definition>
 
 	<!-- Reports -->
 	<definition name="reports/dailysales" extends="page.common">
 		<put-attribute name="content" value="/WEB-INF/jsp/reports/dailysales.jsp" />
 	</definition>
+	<definition name="reports/suppliercosts_input" extends="page.common">
+		<put-attribute name="content" value="/WEB-INF/jsp/reports/suppliercosts_input.jsp" />
+	</definition>
+	<definition name="reports/suppliercosts" extends="page.common">
+		<put-attribute name="content" value="/WEB-INF/jsp/reports/suppliercosts.jsp" />
+	</definition>
+	
 </tiles-definitions>

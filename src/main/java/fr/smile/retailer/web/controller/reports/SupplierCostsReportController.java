@@ -2,6 +2,7 @@ package fr.smile.retailer.web.controller.reports;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,8 +23,10 @@ import Jama.Matrix;
 import com.google.appengine.api.datastore.Key;
 
 import fr.smile.retailer.dao.Filter;
+import fr.smile.retailer.dao.StoreDAO;
 import fr.smile.retailer.dao.interfaces.IDeliveryDAO;
 import fr.smile.retailer.dao.interfaces.IProductDAO;
+import fr.smile.retailer.dao.interfaces.IStoreDAO;
 import fr.smile.retailer.dao.interfaces.ISupplierDAO;
 import fr.smile.retailer.model.Delivery;
 import fr.smile.retailer.model.DeliveryItem;
@@ -49,6 +52,9 @@ public class SupplierCostsReportController {
 	private IDeliveryDAO deliveryDao;
 
 	@Autowired
+	private IStoreDAO storeDao;
+	
+	@Autowired
 	private IProductDAO productDao;
 	
 	@Autowired
@@ -61,9 +67,16 @@ public class SupplierCostsReportController {
 		dataBinder.setIgnoreUnknownFields(false);
 	}
 
-	@RequestMapping(value = "/reports/suppliercosts", method = RequestMethod.GET)
+	@RequestMapping(value = "/reports/suppliercosts/input", method = RequestMethod.GET)
+	public ModelAndView getSupplierCostsReportInput() {
+		ModelAndView mav = new ModelAndView(REPORTS_PREFIX + "suppliercosts_input");
+		mav.addObject("stores", storeDao.findAll());
+		return mav;
+	}
+	
+	@RequestMapping(value = "/reports/suppliercosts", method = RequestMethod.POST)
 	public ModelAndView getSupplierCostsReport(@RequestParam("store") Store store) {
-		ModelAndView mav = new ModelAndView(REPORTS_PREFIX + "suppliercosts_form");
+		ModelAndView mav = new ModelAndView(REPORTS_PREFIX + "suppliercosts");
 		Filter filter = new Filter("storeKey == targetStoreKey", "com.google.appengine.api.datastore.Key targetStoreKey", store.getKey());
 		List<Delivery> deliveries = deliveryDao.findFiltered(filter);
 		List<Key> supplierKeys = new ArrayList<Key>();
@@ -78,6 +91,8 @@ public class SupplierCostsReportController {
 				}
 			}
 		}
+		Collections.sort(products);
+		
 		
 		logger.debug("Definition of vectors for each delivery in supplier");
 		for (Delivery delivery: deliveries) {
@@ -108,7 +123,7 @@ public class SupplierCostsReportController {
 	private Table createTableFromSupplierVectors(Map<Supplier,SupplierVectorContainer> suppliersCalculatedVectors, List<Key> products) {
 		Table table = new Table();
     	
-		logger.debug("Creating first row");
+		logger.debug("Creating first header row");
 		Row firstRow = new Row();
 		firstRow.addCell(new Cell(""));
     	Iterator it = suppliersCalculatedVectors.entrySet().iterator();
@@ -135,19 +150,19 @@ public class SupplierCostsReportController {
 	    		Map.Entry<Supplier,SupplierVectorContainer> entry = (Map.Entry<Supplier,SupplierVectorContainer>) it.next();
 	    		SupplierVectorContainer svc = entry.getValue();
 	    		try {
+	    			BigDecimal price = new BigDecimal(svc.avgPrices.get(0, i));
+	    			logger.debug("Adding price " + price.setScale(3, BigDecimal.ROUND_HALF_EVEN).toPlainString());
+	    			row.addCell(new Cell(price.setScale(3, BigDecimal.ROUND_HALF_EVEN).toPlainString()));
+	    		} catch (NumberFormatException e) {
+	    			logger.debug("Adding empty price cell");
+	    			row.addCell(new Cell(""));
+	    		}
+	    		try {
 	    			BigDecimal cost = new BigDecimal(svc.avgCosts.get(0, i));
 			    	logger.debug("Adding cost " + cost.setScale(3, BigDecimal.ROUND_HALF_EVEN).toPlainString());
 	    			row.addCell(new Cell(cost.setScale(3, BigDecimal.ROUND_HALF_EVEN).toPlainString()));
 	    		} catch (NumberFormatException e) {
 			    	logger.debug("Adding empty cost cell");
-	    			row.addCell(new Cell(""));
-	    		}
-	    		try {
-	    			BigDecimal price = new BigDecimal(svc.avgPrices.get(0, i));
-	    			logger.debug("Adding price " + price.setScale(3, BigDecimal.ROUND_HALF_EVEN).toPlainString());
-	    			row.addCell(new Cell(price.setScale(3, BigDecimal.ROUND_HALF_EVEN).toPlainString()));
-	    		} catch (NumberFormatException e) {
-			    	logger.debug("Adding empty price cell");
 	    			row.addCell(new Cell(""));
 	    		}
 	    	}
