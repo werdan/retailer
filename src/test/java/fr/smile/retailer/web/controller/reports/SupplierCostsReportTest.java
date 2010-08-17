@@ -2,10 +2,11 @@ package fr.smile.retailer.web.controller.reports;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -14,19 +15,20 @@ import org.springframework.web.servlet.ModelAndView;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import fr.smile.retailer.model.Product;
 import fr.smile.retailer.model.Store;
 import fr.smile.retailer.model.Supplier;
-import fr.smile.retailer.web.controller.ControllerAbstractTestNGSpringContextTests;
+import fr.smile.retailer.web.controller.AbstractControllerTest;
 import fr.smile.retailer.web.controller.ReportsController;
 
-public class SupplierCostsReportTest extends ControllerAbstractTestNGSpringContextTests {
+public class SupplierCostsReportTest extends AbstractControllerTest {
 
 	@Autowired
 	private ReportsController controller;
 
 	@Test
 	public void testGetSupplierCosts() throws IOException{
-		String[] productCodes = new String[]{"1","2","3"};
+		String[] productCodes = new String[]{"1","2","3","4","5","6","7"};
 		createProducts(productCodes);
 
 		
@@ -40,11 +42,11 @@ public class SupplierCostsReportTest extends ControllerAbstractTestNGSpringConte
 		
 		Resource deliveryFile2 = loader.getResource("classpath:/testfiles/Delivery2.xls");
 		Calendar cal2 = new GregorianCalendar(2010, Calendar.AUGUST, 11);
-		loadDelivery(cal2.getTime(), store, sup1, deliveryFile2);
+		loadDelivery(cal2.getTime(), store, sup2, deliveryFile2);
 
 		Resource deliveryFile3 = loader.getResource("classpath:/testfiles/Delivery3.xls");
 		Calendar cal3 = new GregorianCalendar(2010, Calendar.AUGUST, 10);
-		loadDelivery(cal3.getTime(), store, sup2, deliveryFile3);
+		loadDelivery(cal3.getTime(), store, sup1, deliveryFile3);
 		
 		Resource deliveryFile4 = loader.getResource("classpath:/testfiles/Delivery4.xls");
 		Calendar cal4 = new GregorianCalendar(2010, Calendar.AUGUST, 14);
@@ -60,9 +62,17 @@ public class SupplierCostsReportTest extends ControllerAbstractTestNGSpringConte
 			Assert.fail("Expecting no exception, got: ",e);
 		}
 		
-		HashMap<Date,HashMap<Store,BigDecimal>> listDS = (HashMap<Date,HashMap<Store,BigDecimal>>) ModelAndViewAssert.assertAndReturnModelAttributeOfType(mav, "dailySalesByStore", HashMap.class);
-
+		@SuppressWarnings("unchecked")
+		HashMap<Product,HashMap<Supplier,List<BigDecimal>>> listProducts = (HashMap<Product,HashMap<Supplier,List<BigDecimal>>>) ModelAndViewAssert.assertAndReturnModelAttributeOfType(mav, "productsVersusSuppliers", HashMap.class);
 		
+		HashMap<Product,HashMap<Supplier,List<BigDecimal>>> targetListProducts = new HashMap<Product,HashMap<Supplier,List<BigDecimal>>>();
+		HashMap<Supplier,List<BigDecimal>> supplierRow = new HashMap<Supplier,List<BigDecimal>>>();
+		List<BigDecimal> productPC = new ArrayList<BigDecimal>();
+		//Sup1 Pr=1
+		productPC.add(BigDecimal.valueOf(33));
+		productPC.add(BigDecimal.valueOf(33));
+		productPC.add(BigDecimal.valueOf(33));
+		targetListProducts.put(productDao.getByCode("1", )
 	}
 	
 }

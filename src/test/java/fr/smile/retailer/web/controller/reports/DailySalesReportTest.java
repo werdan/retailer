@@ -16,10 +16,10 @@ import org.testng.annotations.Test;
 
 import fr.smile.retailer.model.DailySales;
 import fr.smile.retailer.model.Store;
-import fr.smile.retailer.web.controller.ControllerAbstractTestNGSpringContextTests;
+import fr.smile.retailer.web.controller.AbstractControllerTest;
 import fr.smile.retailer.web.controller.ReportsController;
 
-public class DailySalesReportTest extends ControllerAbstractTestNGSpringContextTests {
+public class DailySalesReportTest extends AbstractControllerTest {
 
 	@Autowired
 	private ReportsController controller;

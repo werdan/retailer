@@ -16,7 +16,7 @@ import fr.smile.retailer.model.DeliveryItem;
 import fr.smile.retailer.model.Store;
 import fr.smile.retailer.model.Supplier;
 
-public class DeliveryControllerTest extends ControllerAbstractTestNGSpringContextTests {
+public class DeliveryControllerTest extends AbstractControllerTest {
 
 	@Test
 	public void testSubmit() throws IOException {

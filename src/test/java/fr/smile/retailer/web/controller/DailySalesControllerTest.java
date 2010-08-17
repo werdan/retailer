@@ -16,7 +16,7 @@ import org.testng.annotations.Test;
 import fr.smile.retailer.model.DailySales;
 import fr.smile.retailer.model.Store;
 
-public class DailySalesControllerTest extends ControllerAbstractTestNGSpringContextTests {
+public class DailySalesControllerTest extends AbstractControllerTest {
 
 	@Autowired
 	private DailySalesController controller;

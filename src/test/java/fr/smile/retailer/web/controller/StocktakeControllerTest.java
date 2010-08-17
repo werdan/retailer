@@ -23,7 +23,7 @@ import fr.smile.retailer.model.Store;
 import fr.smile.retailer.model.ZReport;
 import fr.smile.retailer.web.propertyeditors.StoreEditor;
 
-public class StocktakeControllerTest extends ControllerAbstractTestNGSpringContextTests {
+public class StocktakeControllerTest extends AbstractControllerTest {
 
 	@Autowired
 	private StocktakeController controller;
