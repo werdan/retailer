@@ -33,8 +33,8 @@ import fr.smile.retailer.web.propertyeditors.SupplierEditor;
 public class SupplierController {
 	
 	private Logger logger = Logger.getLogger(this.getClass());
-	public final static String VIEW_NAME = "store";	
-	public final static String MODEL_NAME = "store";
+	public final static String VIEW_NAME = "supplier";	
+	public final static String MODEL_NAME = "supplier";
 	
 
 	@Autowired

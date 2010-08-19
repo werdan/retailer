@@ -58,7 +58,7 @@ public class DeliveryItem implements XLSLineModel {
 	public void setProduct(Product product) {
 		this.product = product;
 		if (product != null) {
-			this.productKey = product.getKey();
+			this.setProductKey(product.getKey());
 		}
 	}
 
@@ -104,6 +104,14 @@ public class DeliveryItem implements XLSLineModel {
 
 	public BigDecimal getQuantity() {
 		return quantity;
+	}
+
+	public void setProductKey(Key productKey) {
+		this.productKey = productKey;
+	}
+
+	public Key getProductKey() {
+		return productKey;
 	}
 
 

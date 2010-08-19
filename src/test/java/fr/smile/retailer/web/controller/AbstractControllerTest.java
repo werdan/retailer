@@ -144,7 +144,7 @@ public class AbstractControllerTest extends AbstractTestNGSpringContextTests {
 	}
 	
 	protected Supplier createSupplier(String name) {
-		Supplier sp = new Supplier("testSup");
+		Supplier sp = new Supplier(name);
 		supplierDao.save(sp);
 		return sp;
 	}

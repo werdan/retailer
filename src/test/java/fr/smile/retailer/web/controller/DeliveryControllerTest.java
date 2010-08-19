@@ -27,7 +27,7 @@ public class DeliveryControllerTest extends AbstractControllerTest {
 			Supplier sp = createSupplier("test1");
 
 			//Delivery file
-			Resource res = loader.getResource("classpath:/testfiles/Delivery.xls");
+			Resource res = loader.getResource("classpath:/testfiles/Delivery4.xls");
 			
 			Assert.assertTrue(deliveryDao.findAll().size() == 0);
 

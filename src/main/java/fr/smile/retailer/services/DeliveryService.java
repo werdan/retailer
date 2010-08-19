@@ -25,34 +25,49 @@ public class DeliveryService implements IDeliveryService {
 	
 	@Override
 	public void calculateCosts(Delivery delivery) {
-		BigDecimal koefLeakage = calculateLeakageKoef(delivery);
+
+		BigDecimal sumTrashed = calculateSumTrashed(delivery);
+		BigDecimal sumAll = calculateSumAll(delivery);
+
 		List<DeliveryItem> deliveryItems = new ArrayList<DeliveryItem>();
 		for (DeliveryItem deliveryItem : delivery.getItems()) {
-			deliveryItem.setCost(deliveryItem.getPrice().multiply(koefLeakage).setScale(3, BigDecimal.ROUND_HALF_EVEN));
+			 
+			if (deliveryItem.isTrashed() || sumAll.compareTo(BigDecimal.valueOf(0d)) == 0 ) {
+				deliveryItem.setCost(BigDecimal.valueOf(0d));
+			} else {
+				deliveryItem.setCost(
+						(deliveryItem.getPrice().multiply(deliveryItem.getQuantity())
+								.multiply(sumTrashed)
+								.divide(sumAll, 3, BigDecimal.ROUND_HALF_EVEN)
+								.add(deliveryItem.getPrice().multiply(deliveryItem.getQuantity())))
+								.divide(deliveryItem.getQuantity() ,3, BigDecimal.ROUND_HALF_EVEN));
+			}
 			deliveryItems.add(deliveryItem);
 		}
 		delivery.setItems(deliveryItems);
 	}
 
-	/**
-	 * Calculate ratio of all delivered products quantity to products put to stock 
-	 * (i.e. that part of products are thrown just after delivery)
-	 * @param delivery
-	 * @return
-	 */
-	private BigDecimal calculateLeakageKoef(Delivery delivery) {
+	private BigDecimal calculateSumTrashed(Delivery delivery) {
 		
-		BigDecimal sumAll = new BigDecimal(0);
-		BigDecimal sumNotTrashed = new BigDecimal(0);
+		BigDecimal sumTrashed = new BigDecimal(0);
 		for (DeliveryItem deliveryItem : delivery.getItems()) {
-			sumAll = sumAll.add(deliveryItem.getQuantity());
-			if (!deliveryItem.isTrashed()) {
-				sumNotTrashed = sumNotTrashed.add(deliveryItem.getQuantity());
+			if (deliveryItem.isTrashed()) {
+				sumTrashed = sumTrashed.add(deliveryItem.getQuantity().multiply(deliveryItem.getPrice()));
 			}
 		}
-		return sumAll.divide(sumNotTrashed,3, BigDecimal.ROUND_HALF_EVEN);
+		return sumTrashed;
 	}
 
+	private BigDecimal calculateSumAll(Delivery delivery) {
+		
+		BigDecimal sumAll = new BigDecimal(0);
+		for (DeliveryItem deliveryItem : delivery.getItems()) {
+			sumAll = sumAll.add(deliveryItem.getQuantity().multiply(deliveryItem.getPrice()));
+		}
+		return sumAll;
+	}
+
+	
 	@Override
 	public XLSLineModel createItem(List<String> values) throws IllegalArgumentException {
 		DeliveryItem deliveryItem = new DeliveryItem();
