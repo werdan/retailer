@@ -4,9 +4,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-Отчет по средним ценам и себестоимости закупки у поставщиков в магазине 
+<h1>Выбор магазина для создания отчета по средним ценам и себестоимости закупки у поставщиков</h1>
 
-<form action="/home/reports/suppliercosts" method="post">
+<form action="/home/reports/suppliercosts" method="get">
 	<fieldset>	
 		<label for="store">Выберите магазин</label>
 		<form:select path="stores" name="store" id="store">

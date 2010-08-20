@@ -3,12 +3,21 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
+<h1>Отчет по средним ценам и себестоимости закупки у поставщиков в магазине ${store.name}</h1>
+
 <table>
-	<c:forEach var="row" items="${productsVersusSuppliers.rows}">
+	<c:forEach var="row" items="${productsVersusSuppliers.rows}" varStatus="rowNumber">
 		<tr>
 		<c:forEach var="cell" items="${row.cells}">
-			<td>${cell.value}</td>
+			<c:choose>
+				<c:when test='${rowNumber.count eq 1}'>
+					<th>${cell.value}</th>
+	    		</c:when>
+	    		<c:otherwise>
+					<td>${cell.value}</td>
+	    		</c:otherwise>			
+    		</c:choose>
 		</c:forEach>
-		<tr>
+		</tr>
 	</c:forEach>
 </table>

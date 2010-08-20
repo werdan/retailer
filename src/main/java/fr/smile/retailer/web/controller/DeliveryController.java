@@ -123,7 +123,7 @@ public class DeliveryController {
 			deliveryService.calculateCosts(delivery);
 			deliveryDao.save(delivery);
 			
-			return "redirect:/home/index";			
+			return "redirect:/home/forms/delivery";			
 		} else {
 			logger.error("Error in delivery processing: file is empty");
 			return "redirect:/home/forms/delivery";

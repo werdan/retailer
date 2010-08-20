@@ -24,6 +24,21 @@ public class SupplierCostsReportControllerTest extends AbstractControllerTest {
 
 	
 	@Test
+	public void testInputSupplierCosts() {
+		request.setRequestURI("/reports/suppliercosts/input");
+		request.setMethod("GET");
+
+		ModelAndView mav = null;
+		try {
+			mav = handlerAdapter.handle(request, response, controller);
+		} catch (Exception e) {
+			Assert.fail("Expecting no exception, got: ",e);
+		}
+		
+		ModelAndViewAssert.assertViewName(mav, "reports/suppliercosts_input");
+	}
+	
+	@Test
 	public void testGetSupplierCosts() throws IOException{
 		String[] productCodes = new String[]{"1","2","3","4","5","6","7"};
 		createProducts(productCodes);
@@ -59,7 +74,7 @@ public class SupplierCostsReportControllerTest extends AbstractControllerTest {
 		request.setRequestURI("/reports/suppliercosts");
 		storePropEditor.setValue(store);
 		request.setParameter("store", storePropEditor.getAsText());
-		request.setMethod("POST");
+		request.setMethod("GET");
 
 		ModelAndView mav = null;
 		try {
@@ -67,6 +82,8 @@ public class SupplierCostsReportControllerTest extends AbstractControllerTest {
 		} catch (Exception e) {
 			Assert.fail("Expecting no exception, got: ",e);
 		}
+		
+		ModelAndViewAssert.assertViewName(mav, "reports/suppliercosts");
 		
 		Table table = (Table) ModelAndViewAssert.assertAndReturnModelAttributeOfType(mav, "productsVersusSuppliers", Table.class);
 		//Results are also stored in src/test/resources/testfiles/SupplierCostResults.xls

@@ -54,6 +54,6 @@ public class DeliveryControllerTest extends AbstractControllerTest {
 			Assert.assertNotNull(delivery.getSupplierKey());
 			Assert.assertNotNull(delivery.getXLSBlob());
 			
-			ModelAndViewAssert.assertViewName(mav, "redirect:/home/index");
+			ModelAndViewAssert.assertViewName(mav, "redirect:/home/forms/delivery");
 	}	
 }

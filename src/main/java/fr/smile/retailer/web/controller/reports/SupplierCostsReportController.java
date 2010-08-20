@@ -74,9 +74,10 @@ public class SupplierCostsReportController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "/reports/suppliercosts", method = RequestMethod.POST)
+	@RequestMapping(value = "/reports/suppliercosts", method = RequestMethod.GET)
 	public ModelAndView getSupplierCostsReport(@RequestParam("store") Store store) {
 		ModelAndView mav = new ModelAndView(REPORTS_PREFIX + "suppliercosts");
+		mav.addObject("store", store);
 		Filter filter = new Filter("storeKey == targetStoreKey", "com.google.appengine.api.datastore.Key targetStoreKey", store.getKey());
 		List<Delivery> deliveries = deliveryDao.findFiltered(filter);
 		List<Key> supplierKeys = new ArrayList<Key>();
@@ -87,12 +88,13 @@ public class SupplierCostsReportController {
 		for (Delivery delivery: deliveries) {
 			for (DeliveryItem item: delivery.getItems()) {
 				if (!item.isTrashed() && !products.contains(item.getProductKey())) {
+					logger.debug("Added product with key = " + item.getProductKey());
 					products.add(item.getProductKey());
 				}
 			}
 		}
 		Collections.sort(products);
-		
+		logger.debug("Final table will include " + products.size() + " product lines");
 		
 		logger.debug("Definition of vectors for each delivery in supplier");
 		for (Delivery delivery: deliveries) {

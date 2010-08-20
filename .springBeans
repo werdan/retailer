@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[2.3.2.201003220227-RELEASE]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[true]]></enableImports>
+	<configs>
+		<config>src/main/resources/spring/applicationContext.xml</config>
+		<config>src/main/resources/spring/dao.xml</config>
+		<config>src/main/webapp/WEB-INF/home-servlet.xml</config>
+		<config>src/main/resources/spring/mvc.xml</config>
+		<config>src/main/resources/spring/services.xml</config>
+		<config>src/test/resources/spring/testApplicationContext.xml</config>
+		<config>src/main/resources/spring/tilesConfigurer.xml</config>
+	</configs>
+	<configSets>
+	</configSets>
+</beansProjectDescription>
