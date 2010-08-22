@@ -29,6 +29,10 @@
 		<put-attribute name="content" value="/WEB-INF/jsp/stocktake.jsp" />
 	</definition>
 
+	<definition name="stockmove" extends="page.common">
+		<put-attribute name="content" value="/WEB-INF/jsp/stockmove.jsp" />
+	</definition>
+
 	<definition name="delivery" extends="page.common">
 		<put-attribute name="content" value="/WEB-INF/jsp/delivery.jsp" />
 	</definition>

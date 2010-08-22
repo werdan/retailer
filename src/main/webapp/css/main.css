@@ -138,6 +138,11 @@ a img {border: 0;padding: 0;}
 /* Bottom */ .pb30 {padding-bottom: 30px !important;}
 /* end: padding ******************** * * */
 
+h1 {
+	font-size: 2em;
+	margin: 1em;
+}
+
 /* Tables */
 table  {
 	border-width: 1px;

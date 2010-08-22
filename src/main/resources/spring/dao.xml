@@ -10,12 +10,13 @@
 	<bean id="appEnginePersistenceManagerLocator"
 		class="fr.smile.retailer.dao.AppEnginePersistenceManagerLocator"/>
 
-	<bean id="dailySalesDAO" class="fr.smile.retailer.dao.DailySalesDAO"/>
-	<bean id="storeDAO" class="fr.smile.retailer.dao.StoreDAO"/>
-	<bean id="stocktakeDAO" class="fr.smile.retailer.dao.StocktakeDAO"/>
-	<bean id="deliveryDAO" class="fr.smile.retailer.dao.DeliveryDAO"/>
-	<bean id="productDAO" class="fr.smile.retailer.dao.ProductDAO"/>
-	<bean id="zreportDAO" class="fr.smile.retailer.dao.ZReportDAO"/>
-	<bean id="supplierDAO" class="fr.smile.retailer.dao.SupplierDAO"/>
+	<bean class="fr.smile.retailer.dao.DailySalesDAO"/>
+	<bean class="fr.smile.retailer.dao.StoreDAO"/>
+	<bean class="fr.smile.retailer.dao.StocktakeDAO"/>
+	<bean class="fr.smile.retailer.dao.DeliveryDAO"/>
+	<bean class="fr.smile.retailer.dao.ProductDAO"/>
+	<bean class="fr.smile.retailer.dao.ZReportDAO"/>
+	<bean class="fr.smile.retailer.dao.SupplierDAO"/>
+	<bean class="fr.smile.retailer.dao.StockmoveDAO"/>
 
 </beans>

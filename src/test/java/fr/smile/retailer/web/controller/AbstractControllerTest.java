@@ -27,6 +27,7 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import fr.smile.retailer.dao.interfaces.IDailySalesDAO;
 import fr.smile.retailer.dao.interfaces.IDeliveryDAO;
 import fr.smile.retailer.dao.interfaces.IProductDAO;
+import fr.smile.retailer.dao.interfaces.IStockmoveDAO;
 import fr.smile.retailer.dao.interfaces.IStocktakeDAO;
 import fr.smile.retailer.dao.interfaces.IStoreDAO;
 import fr.smile.retailer.dao.interfaces.ISupplierDAO;
@@ -63,6 +64,9 @@ public class AbstractControllerTest extends AbstractTestNGSpringContextTests {
 	protected IStocktakeDAO stocktakeDao; 
 
 	@Autowired
+	protected IStockmoveDAO stockmoveDao;
+	
+	@Autowired
 	protected IZReportDAO zreportDao;
 	
 	protected HandlerAdapter handlerAdapter;
@@ -82,6 +86,9 @@ public class AbstractControllerTest extends AbstractTestNGSpringContextTests {
 	//Controllers
 	@Autowired
 	private DeliveryController deliveryController;
+
+	@Autowired
+	private StockmoveController stockmoveController;
 	
     @AfterMethod
     public void tearDown() {
@@ -137,6 +144,32 @@ public class AbstractControllerTest extends AbstractTestNGSpringContextTests {
 		return mav;
 	}
 
+	protected ModelAndView loadStockmove(Date date, Store store, Resource resource) throws IOException {
+		MockMultipartHttpServletRequest request = new MockMultipartHttpServletRequest();
+		
+		request.setRequestURI("/forms/stockmove");
+		request.setMethod("POST");
+		//Date
+		datePropEditor.setValue(date);
+		request.addParameter("date", datePropEditor.getAsText());
+
+		storePropEditor.setValue(store);
+		request.addParameter("store", storePropEditor.getAsText());
+		
+		//Stockmove file
+		MockMultipartFile mockFile = new MockMultipartFile("stockmovexls", resource.getInputStream());
+		request.addFile(mockFile);
+		
+		ModelAndView mav = null;
+		try {
+			mav = handlerAdapter.handle(request, response, stockmoveController);
+		} catch (Exception e) {
+			Assert.fail("Expecting no exception, got: ",e);
+		}
+		return mav;
+	}
+
+	
 	protected Store createStore(String name) {
 		Store store = new Store(name);
 		storeDao.save(store);
